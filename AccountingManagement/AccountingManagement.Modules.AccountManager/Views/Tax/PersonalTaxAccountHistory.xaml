@@ -1,0 +1,164 @@
+﻿<UserControl x:Class="AccountingManagement.Modules.AccountManager.Views.PersonalTaxAccountHistory"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AccountingManagement.Modules.AccountManager.Views"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Margin="5,5,5,0" x:Name="PersonalTaxAccountLogRoot">
+        <Grid.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Side bar buttons -->
+        <Expander Grid.Row="0" Grid.RowSpan="3" IsExpanded="False" ExpandDirection="Right" Margin="0,0,5,0"
+                  IsTabStop="False" BorderBrush="#CCCCCC" BorderThickness="0,0,2,0">
+            <StackPanel Width="45">
+                <Button Width="40" Height="35" Background="#FFE194"
+                        ToolTip="Refresh"
+                        Command="{Binding RefreshPageCommand}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="17" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+
+                <Button Width="40" Height="35" Background="#86C6F4" Margin="0,5,0,0"
+                        ToolTip="Go back to Personal Tax Overview"
+                        Command="{Binding NavigateToPersonalTaxAccountOverviewCommand}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xF0B0;" FontFamily="Segoe MDL2 Assets" FontSize="17" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+        </Expander>
+
+        <!-- Command row -->
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,5,0,0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="PERSONAL TAX / T1 HISTORY" Margin="3,0,0,0" Width="300"  FontWeight="Bold" FontSize="20" />
+
+                <Button Width="40" Height="35" Background="#FFE194" Margin="5,0,0,0"
+                        ToolTip="Refresh"
+                        Command="{Binding RefreshPageCommand}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="17" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Button Width="40" Height="35" Background="#86C6F4" Margin="5,0,0,0"
+                        ToolTip="Go back to Personal Tax Overview"
+                        Command="{Binding NavigateToPersonalTaxAccountOverviewCommand}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xF0B0;" FontFamily="Segoe MDL2 Assets" FontSize="17" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+
+            </StackPanel>
+            <Rectangle Grid.Row="0" Grid.Column="1" Height="1" Stroke="LightGray" Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <!-- Header row -->
+        <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,5,0,0">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Margin" Value="5,0,0,0" />
+                    </Style>
+                </StackPanel.Resources>
+                <StackPanel>
+                    <TextBlock Text="Owner" Width="325"/>
+                    <TextBox Text="{Binding OwnerFilterText, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,10,3"
+                             ui:ControlHelper.PlaceholderText="Search by Owner Name, SIN or Phone" />
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Tax Year" Width="95"/>
+                    <TextBox Text="{Binding TaxYearFilter, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,10,3" />
+                </StackPanel>
+                <TextBlock Text="Notes" Width="295"/>
+                <TextBlock Text="Timestamp" Width="195"/>
+                <TextBlock Text="User" />
+            </StackPanel>
+            <Rectangle Grid.Row="0" Grid.Column="1" Height="1" Stroke="LightGray" Margin="0,5,0,5"/>
+        </StackPanel>
+
+
+        <!-- Content -->
+        <ListView x:Name="ItemOverviewListView" Grid.Row="2" Grid.Column="1" AlternationCount="2"
+                  ItemsSource="{Binding AccountLogsView}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ScrollViewer.VerticalScrollBarVisibility="Visible">
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="Focusable" Value="False" />
+                    <Style.Triggers>
+                        <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                            <Setter Property="Background" Value="#E9EDF2" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl>
+                        <!--<i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding Path=DataContext.OpenPersonalTaxAccountDetailsDialogCommand, ElementName=ItemOverviewListView}" 
+                                                       CommandParameter="{Binding PersonalTaxAccount}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>-->
+                        <StackPanel Margin="0,2" Orientation="Horizontal">
+                            <StackPanel.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                    <Setter Property="TextWrapping" Value="Wrap" />
+                                </Style>
+                            </StackPanel.Resources>
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel Width="330">
+                                    <ui:HyperlinkButton Content="{Binding Owner.Name}" FontSize="16" Padding="0"
+                                                        Command="{Binding Path=DataContext.NavigateToOwnerOverviewCommand, ElementName=ItemOverviewListView}"
+                                                        CommandParameter="{Binding Owner}" />
+                                    <TextBlock Text="{Binding Owner.SIN, StringFormat={}S: {0}}" FontSize="13" />
+                                    <TextBlock Text="{Binding Owner.PhoneNumber, StringFormat={}P: {0}}" FontSize="13" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <TextBlock Text="{Binding TaxYear}" Width="100" />
+                            <TextBlock Text="{Binding ConfirmationNotes}" Width="300" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding Timestamp, StringFormat={}{0:MM-dd-yyyy HH:mm:ss}}" Width="200" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding UserAccount.DisplayName}" Width="250" TextWrapping="Wrap" />
+                        </StackPanel>
+                        
+                    </ContentControl>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+    </Grid>
+</UserControl>

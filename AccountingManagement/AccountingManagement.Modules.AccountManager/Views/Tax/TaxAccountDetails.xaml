@@ -1,0 +1,119 @@
+﻿<UserControl x:Class="AccountingManagement.Modules.AccountManager.Views.TaxAccountDetails"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AccountingManagement.Modules.AccountManager.Views"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             xml:lang="en-CA"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Width="600" MinHeight="550">
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ShowInTaskbar" Value="False" />
+            <Setter Property="ResizeMode" Value="NoResize" />
+            <Setter Property="SizeToContent" Value="WidthAndHeight" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+    </prism:Dialog.WindowStyle>
+    <Grid Margin="25,10">
+        <Grid.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Grid.ColumnSpan="2" 
+                BorderThickness="0,0,0,2" BorderBrush="CornflowerBlue" VerticalAlignment="Top">
+            <TextBlock Text="Tax Account Details" FontSize="22" Foreground="DarkBlue" />
+        </Border>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
+            <TextBlock Text="{Binding Business.OperatingName}" FontWeight="DemiBold" FontSize="20" TextWrapping="Wrap" />
+            <TextBlock Text="{Binding Business.LegalName}" FontSize="16" TextWrapping="Wrap" />
+            <TextBox Text="{Binding Business.BusinessNumber, StringFormat=Business No: {0}}" FontSize="16"
+                     Padding="0" Background="Transparent" BorderThickness="0" IsReadOnly="True" />
+            <Rectangle Stroke="Gray" Margin="0,5"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,0,10">
+            <TextBlock Text="{Binding TaxAccount.AccountType, StringFormat={}{0} Account}" FontSize="16" FontWeight="SemiBold" />
+            <Rectangle Stroke="Gray" Margin="0,5"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding TaxAccount.AccountType, StringFormat=Run {0} Tax}" />
+        <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding TaxAccount.IsActive}" />
+
+        <Grid Grid.Row="4" Grid.ColumnSpan="2"
+              IsEnabled="{Binding TaxAccount.IsActive}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Account Number" />
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TaxAccount.AccountNumber}" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Filing Cycle" />
+            <ComboBox Grid.Row="1" Grid.Column="1" Width="170" Margin="0,5,0,0"
+                  ItemsSource="{Binding FilingCycles}" 
+                  SelectedValue="{Binding TaxAccount.Cycle, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Ending Period" />
+            <DatePicker Grid.Row="2" Grid.Column="1" Width="170" Margin="0,5,0,0"
+                    SelectedDate="{Binding TaxAccount.EndingPeriod, StringFormat=MM-dd-yyyy}" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Due Date" />
+            <DatePicker Grid.Row="3" Grid.Column="1" Width="170" Margin="0,5,0,0"
+                    SelectedDate="{Binding TaxAccount.DueDate, StringFormat=MM-dd-yyyy}" />
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Notes" />
+            <TextBox Grid.Row="4" Grid.Column="1" Height="80" Margin="0,5,0,0" 
+                 TextWrapping="Wrap" AcceptsReturn="True" ui:ControlHelper.PlaceholderText="Notes"
+                 Text="{Binding TaxAccount.Notes}" />
+        </Grid>
+
+        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Margin="0,20,0,0">
+            <Button Width="100" Background="CornflowerBlue" Foreground="White"
+                    Command="{Binding SaveTaxAccountCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Symbol="Save" Margin="0,0,10,0" />
+                    <TextBlock Text="Save" Foreground="White" FontWeight="SemiBold" />
+                </StackPanel>
+            </Button>
+            <Button Width="100" Content="Cancel" Margin="5,0,0,0"
+                    Command="{Binding CloseDialogCommand}">
+            </Button>
+        </StackPanel>
+
+        <TextBlock Grid.Row="6" Grid.Column="1" Foreground="Red"
+                   Text="{Binding ErrorMessage}"
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}" />
+    </Grid>
+</UserControl>

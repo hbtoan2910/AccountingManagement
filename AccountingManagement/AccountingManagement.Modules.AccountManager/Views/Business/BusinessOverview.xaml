@@ -1,0 +1,1034 @@
+﻿<UserControl x:Class="AccountingManagement.Modules.AccountManager.Views.BusinessOverview"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AccountingManagement.Modules.AccountManager.Views"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="1600">
+    <UserControl.Resources>
+        <!--<Style TargetType="Expander">
+            <Setter Property="Margin" Value="0,5" />
+            <Setter Property="Padding" Value="5,0" />
+            <Setter Property="Background" Value="#E4EFE7" />
+            <Setter Property="BorderBrush" Value="#C4CFC7" />
+            <Setter Property="BorderThickness" Value="1,1,2,4" />
+        </Style>-->
+    </UserControl.Resources>
+    <Grid Margin="5,5,5,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <!-- Left side space -->
+            <ColumnDefinition Width="2*" />
+            <!-- Business list -->
+            <!--<ColumnDefinition Width="5" />-->
+            <!-- Separator -->
+            <ColumnDefinition Width="3*" />
+            <!-- Business details panel -->
+            <ColumnDefinition Width="Auto"/>
+            <!-- Separator -->
+            <ColumnDefinition Width="Auto" />
+            <!-- Owner list -->
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Column 0: Left side spacing column -->
+        <Rectangle Margin="15,0,0,0" VerticalAlignment="Stretch" Width="1" Stroke="Gray" />
+
+        <!-- Column 1: Business list and filtering functions -->
+        <Grid Grid.Column="1" Margin="5,0,10,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Margin="0,5,0,0">
+                <DockPanel LastChildFill="True">
+                    <Button DockPanel.Dock="Right" Width="35" Height="35" Background="#FFE194" ToolTip="Refresh"
+                            Command="{Binding RefreshPageCommand}">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="17" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                    <TextBox Text="{Binding BusinessFilterText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,5,0"
+                             ui:ControlHelper.PlaceholderText="Search by Business Legal Name, Operating Name or Owner Name" />
+                </DockPanel>
+
+                <DockPanel LastChildFill="True">
+                    <CheckBox DockPanel.Dock="Right" Style="{StaticResource {x:Type ToggleButton}}"
+                              IsChecked="{Binding IncludeDeletedBusiness, UpdateSourceTrigger=PropertyChanged}"
+                              Content="Show Deleted" />
+
+                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="0,5">
+                        <TextBlock Margin="5,0,0,0" Text="Sorting" VerticalAlignment="Center" />
+                        <RadioButton Margin="5,0,0,0"
+                            Content="A to Z" GroupName="SortByBusinessName" Style="{StaticResource {x:Type ToggleButton}}"
+                            IsChecked="{Binding SortByBusinessNameAscending, UpdateSourceTrigger=PropertyChanged}" />
+                        <RadioButton Margin="5,0,0,0"
+                            Content="Z to A" GroupName="SortByBusinessName" Style="{StaticResource {x:Type ToggleButton}}" />
+                    </StackPanel>
+                </DockPanel>
+
+                <Separator Margin="0,5" />
+            </StackPanel>
+
+            <ListView x:Name="BusinessListView" Grid.Row="1" AlternationCount="2" IsSynchronizedWithCurrentItem="True"
+                      ItemsSource="{Binding BusinessesView}"
+                      SelectedItem="{Binding SelectedBusiness, UpdateSourceTrigger=PropertyChanged}"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Style.Triggers>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                <Setter Property="Background" Value="#FFE1E5EA" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <i:InvokeCommandAction Command="{Binding Path=DataContext.OpenEditBusinessDialogCommand, ElementName=BusinessListView}" 
+                                                           CommandParameter="{Binding Id}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <StackPanel Margin="0,0,0,5">
+                                <TextBlock Text="{Binding OperatingName}" FontSize="18" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding LegalName}" TextWrapping="Wrap" />
+                                <!--<TextBlock Text="{Binding Address}" FontSize="10" TextWrapping="Wrap" />-->
+                            </StackPanel>
+                        </ContentControl>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <StackPanel Grid.Row="2" Margin="0,5,0,0">
+                <Separator />
+                <Label Content="{Binding BusinessItemCount}" ContentStringFormat="{}{0} item(s) found" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Column 2: Separator -->
+        <GridSplitter Grid.Column="1" Background="LightGray" ShowsPreview="True" Width="3"/>
+
+        <!-- Column 3: Business details -->
+        <ScrollViewer Grid.Column="2">
+            <StackPanel Margin="7,0" Visibility="{Binding SelectedBusiness, Converter={StaticResource nullToVisibilityConverter}}">
+                <!-- Business details -->
+                <Border CornerRadius="10" Background="#EFEFEF" Padding="10" Margin="0,0,0,10">
+                <StackPanel>
+                    <TextBlock Text="{Binding SelectedBusiness.OperatingName}" FontSize="27" FontWeight="DemiBold" TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding SelectedBusiness.LegalName}" FontSize="20" TextWrapping="Wrap" />
+                    <Separator Margin="0,5" />
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Business No."/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" 
+                                   Text="{Binding SelectedBusiness.BusinessNumber, Converter={StaticResource nullToDashStringConverter}, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Business Date" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" 
+                                   Text="{Binding SelectedBusiness.BusinessDate, StringFormat=MM-dd-yyyy, Converter={StaticResource nullToDashStringConverter}, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Address"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" 
+                                   Text="{Binding SelectedBusiness.Address, Converter={StaticResource nullToDashStringConverter}, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Email" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" 
+                                   Text="{Binding SelectedBusiness.Email, Converter={StaticResource nullToDashStringConverter}, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Email Contact Name" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" 
+                                   Text="{Binding SelectedBusiness.EmailContact, Converter={StaticResource nullToDashStringConverter}, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <DockPanel Grid.Row="5" Grid.ColumnSpan="2" LastChildFill="True">
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <Button DockPanel.Dock="Right" Width="120" Margin="5,10,0,0" Background="#F0A500"
+                                    Command="{Binding DeleteBusinessCommand}"
+                                    CommandParameter="{Binding SelectedBusiness}"
+                                    Visibility="{Binding SelectedBusiness.IsDeleted, Converter={StaticResource boolToVisibilityReverseConverter}, ConverterParameter=True}">
+                                    <Button.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="20" Margin="0,0,10,0" 
+                                                   Foreground="White" />
+                                            <TextBlock Text="Deactivate" Foreground="White" FontWeight="Bold" />
+                                        </StackPanel>
+                                    </Button.Content>
+                                </Button>
+                                <Button DockPanel.Dock="Right" Width="120" Margin="5,10,0,0" Background="ForestGreen"
+                                    Command="{Binding ReactivateBusinessCommand}"
+                                    CommandParameter="{Binding SelectedBusiness}"
+                                    Visibility="{Binding SelectedBusiness.IsDeleted, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=True}">
+                                        <Button.Content>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="&#xE7AD;" FontFamily="Segoe MDL2 Assets" FontSize="20" Margin="0,0,10,0" 
+                                                   Foreground="White" />
+                                                <TextBlock Text="Reactivate" Foreground="White" FontWeight="Bold" />
+                                            </StackPanel>
+                                        </Button.Content>
+                                </Button>
+                            </StackPanel>
+                            <StackPanel DockPanel.Dock="Left">
+                                <Button Width="100" Margin="0,10,0,0"
+                                    Command="{Binding OpenEditBusinessDialogCommand}"
+                                    CommandParameter="{Binding SelectedBusiness.Id}" >
+                                    <Button.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xEB7E;" FontFamily="Segoe MDL2 Assets" FontSize="20" Margin="0,0,10,0" />
+                                            <TextBlock Text="Edit"/>
+                                        </StackPanel>
+                                    </Button.Content>
+                                </Button>
+                            </StackPanel>
+                        </DockPanel>
+                    </Grid>
+                    <!--<Separator Margin="0,15,0,15"/>-->
+                </StackPanel>
+                </Border>
+
+                <!-- Tasks -->
+                <Expander IsExpanded="True" Style="{StaticResource BusinessDetailExpander}">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="Tasks" Height="25" FontWeight="SemiBold" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border BorderThickness="0,0,0,0" BorderBrush="#FFC764" >
+                            <StackPanel Grid.Column="0">
+                                <Button Command="{Binding OpenNewTaskDialogCommand}"
+                                        CommandParameter="{Binding SelectedBusiness.Id}"
+                                        Background="ForestGreen" Margin="5,0,0,5">
+                                    <Button.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label Content="&#xE82E;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="White" />
+                                            <Label Content="New" Margin="5,0" Foreground="White" />
+                                        </StackPanel>
+                                    </Button.Content>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+
+                        <ListView Grid.Column="1" Margin="10,0,0,0"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  ItemsSource="{Binding SelectedBusinessTasks, UpdateSourceTrigger=PropertyChanged}">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentControl>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseDoubleClick">
+                                                <i:InvokeCommandAction Command="{Binding Path=DataContext.OpenEditTaskDialogCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+                                                                       CommandParameter="{Binding Id}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <Border BorderThickness="1" BorderBrush="#7777ACF1" Margin="2"
+                                                Background="{Binding TaskStatus, Converter={StaticResource taskStatusToColorConverter}}">
+                                            <Border.Effect>
+                                                <DropShadowEffect Color="#7777ACF1" ShadowDepth="1" BlurRadius="7">
+                                                </DropShadowEffect>
+                                            </Border.Effect>
+                                            <StackPanel Margin="3" Width="300" MinHeight="80" ToolTip="{Binding LastUpdated}">
+                                                <TextBlock Text="{Binding UserAccount.DisplayName}" FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
+                                                <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" Foreground="Red" FontWeight="SemiBold" />
+                                            </StackPanel>
+                                        </Border>
+                                    </ContentControl>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </Expander>
+
+                <!-- Notes -->
+                <Expander IsExpanded="False" Style="{StaticResource BusinessDetailExpander}">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="Notes" Height="25" FontWeight="SemiBold" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border BorderThickness="0,0,0,0" BorderBrush="LightGray" >
+                            <StackPanel Grid.Column="0">
+                                <Button Command="{Binding OpenNewNoteDialogCommand}"
+                                        CommandParameter="{Binding SelectedBusiness.Id}"
+                                        Background="ForestGreen" Margin="5,0,0,5">
+                                    <Button.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label Content="&#xE82E;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="White" />
+                                            <Label Content="New" Margin="5,0" Foreground="White" />
+                                        </StackPanel>
+                                    </Button.Content>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+
+                        <ListView Grid.Column="1" x:Name="SelectedBusinessNoteListView" Margin="10,0,0,0" MaxHeight="250"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                  ItemsSource="{Binding SelectedBusinessNotes, UpdateSourceTrigger=PropertyChanged}">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Focusable" Value="False" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Style.Triggers>
+                                        <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                            <Setter Property="Background" Value="#E1E5EA" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentControl>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseDoubleClick">
+                                                <i:InvokeCommandAction Command="{Binding Path=DataContext.OpenEditNoteDialogCommand, ElementName=SelectedBusinessNoteListView}"
+                                                                       CommandParameter="{Binding Id}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <DockPanel LastChildFill="True">
+
+                                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                                <Button DockPanel.Dock="Right" Width="100" Margin="5,10,0,0" Background="#F0A500"
+                                                        Command="{Binding DataContext.DeleteNoteCommand, ElementName=SelectedBusinessNoteListView}"
+                                                        CommandParameter="{Binding .}" >
+                                                    <Button.Content>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="&#xECC9;" FontFamily="Segoe MDL2 Assets" FontSize="20" Margin="0,0,10,0" Foreground="White" />
+                                                            <TextBlock Text="Delete" Foreground="White" FontWeight="Bold" />
+                                                        </StackPanel>
+                                                    </Button.Content>
+                                                </Button>
+                                            </StackPanel>
+
+                                            <StackPanel DockPanel.Dock="Left" Margin="3" ToolTip="{Binding LastUpdated}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Created, StringFormat=MM-dd-yyyy HH:mm:ss}" Width="150" FontWeight="SemiBold" FontStyle="Italic" />
+                                                    <TextBlock Text="{Binding Header}" TextWrapping="Wrap" FontWeight="SemiBold" />
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding Content}" TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                        
+                                    </ContentControl>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </Expander>
+
+                <!-- HST -->
+                <Expander Style="{StaticResource BusinessDetailExpander}"
+                          Visibility="{Binding SelectedHSTAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="HST Account" Width="150" Height="25" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding SelectedHSTAccount.AccountNumber}" Height="25" FontStyle="Italic" />
+                        </StackPanel>
+                    </Expander.Header>
+
+                    <Grid Grid.Column="1" Margin="25,0,25,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Run HST" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="0" Grid.Column="1" IsHitTestVisible="False"
+                                  IsChecked="{Binding SelectedHSTAccount.IsActive}" />
+                            
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Require Instalment" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="0" Grid.Column="3" IsHitTestVisible="False"
+                                  IsChecked="{Binding SelectedHSTAccount.InstalmentRequired}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="HST Number" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedHSTAccount.AccountNumber}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="Instalment Amount" />
+                        <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding SelectedHSTAccount.InstalmentAmount, StringFormat={}{0:C}}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="HST Cycle" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedHSTAccount.Cycle}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="Instalment Due Date" />
+                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding SelectedHSTAccount.InstalmentDueDate, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Ending Period" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedHSTAccount.EndingPeriod, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedHSTAccount.DueDate, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Assigned To" />
+                        <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" TextWrapping="Wrap"
+                                   Text="{Binding SelectedHSTAccount.UserAccountId}" />
+
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Notes" />
+                        <TextBlock Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="4" TextWrapping="Wrap" Foreground="Red" 
+                                   Text="{Binding SelectedHSTAccount.Notes}" />
+
+                    </Grid>
+                </Expander>
+
+                <!-- Corporation Tax -->
+                <Expander Style="{StaticResource BusinessDetailExpander}"
+                          Visibility="{Binding SelectedCorporationTaxAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="Corporation Tax" Width="150" Height="25" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding SelectedCorporationTaxAccount.AccountNumber}" Height="25" FontStyle="Italic" />
+                        </StackPanel>
+                    </Expander.Header>
+
+                    <Grid Grid.Column="1" Margin="25,0,25,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Run Corp. Tax" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="0" Grid.Column="1" IsHitTestVisible="False"
+                                  IsChecked="{Binding SelectedCorporationTaxAccount.IsActive}" />
+
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Require Instalment" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="0" Grid.Column="3" IsHitTestVisible="False"
+                                  IsChecked="{Binding SelectedCorporationTaxAccount.InstalmentRequired}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Corp. Tax Number" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedCorporationTaxAccount.AccountNumber}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="Instalment Amount" />
+                        <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding SelectedCorporationTaxAccount.InstalmentAmount, StringFormat={}{0:C}}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Corp. Tax Cycle" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedCorporationTaxAccount.Cycle}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="Instalment Due Date" />
+                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding SelectedCorporationTaxAccount.InstalmentDueDate, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Ending Period" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedCorporationTaxAccount.EndingPeriod, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedCorporationTaxAccount.DueDate, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Notes" />
+                        <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" TextWrapping="Wrap" Foreground="Red" 
+                                   Text="{Binding SelectedCorporationTaxAccount.Notes}" />
+                    </Grid>
+                </Expander>
+
+                <!-- PST -->
+                <Expander Style="{StaticResource BusinessDetailExpander}"
+                          Visibility="{Binding SelectedPSTAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="PST Account" Width="150" Height="25" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding SelectedPSTAccount.AccountNumber}" Height="25" FontStyle="Italic" />
+                        </StackPanel>
+                    </Expander.Header>
+
+                    <Grid Grid.Column="1" Margin="25,0,25,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Run PST" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="0" Grid.Column="1" IsHitTestVisible="False"
+                                  IsChecked="{Binding SelectedPSTAccount.IsActive}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="PST Number" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedPSTAccount.AccountNumber}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="PST Cycle" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedPSTAccount.Cycle}" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Ending Period" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedPSTAccount.EndingPeriod, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedPSTAccount.DueDate, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Notes" />
+                        <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" TextWrapping="Wrap" Foreground="Red" 
+                                   Text="{Binding SelectedPSTAccount.Notes}" />
+                    </Grid>
+                </Expander>
+
+                <!-- WSIB -->
+                <Expander Style="{StaticResource BusinessDetailExpander}"
+                          Visibility="{Binding SelectedWSIBAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="WSIB/WCB Account" Width="150" Height="25" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding SelectedWSIBAccount.AccountNumber}" Height="25" FontStyle="Italic" />
+                        </StackPanel>
+                    </Expander.Header>
+
+                    <Grid Grid.Column="1" Margin="25,0,25,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Run WSIB/WCB" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="0" Grid.Column="1" IsHitTestVisible="False"
+                                  IsChecked="{Binding SelectedWSIBAccount.IsActive}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="WSIB/WCB Number" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedWSIBAccount.AccountNumber}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="WSIB/WCB Cycle" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedWSIBAccount.Cycle}" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Ending Period" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedWSIBAccount.EndingPeriod, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedWSIBAccount.DueDate, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Notes" />
+                        <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" TextWrapping="Wrap" Foreground="Red" 
+                                   Text="{Binding SelectedWSIBAccount.Notes}" />
+                    </Grid>
+                </Expander>
+
+                <!-- LIQ -->
+                <Expander Style="{StaticResource BusinessDetailExpander}"
+                          Visibility="{Binding SelectedLIQAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="LIQ Account" Width="150" Height="25" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding SelectedLIQAccount.AccountNumber}" Height="25" FontStyle="Italic" />
+                        </StackPanel>
+                    </Expander.Header>
+
+                    <Grid Grid.Column="1" Margin="25,0,25,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Run LIQ" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="0" Grid.Column="1" IsHitTestVisible="False"
+                                  IsChecked="{Binding SelectedLIQAccount.IsActive}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="LIQ Number" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedLIQAccount.AccountNumber}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="LIQ Cycle" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedLIQAccount.Cycle}" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Ending Period" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedLIQAccount.EndingPeriod, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedLIQAccount.DueDate, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Notes" />
+                        <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" TextWrapping="Wrap" Foreground="Red" 
+                                   Text="{Binding SelectedLIQAccount.Notes}" />
+                    </Grid>
+                </Expander>
+
+                <!-- ONT -->
+                <Expander Style="{StaticResource BusinessDetailExpander}"
+                          Visibility="{Binding SelectedONTAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="ONT Account" Width="150" Height="25" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding SelectedONTAccount.AccountNumber}" Height="25" FontStyle="Italic" />
+                        </StackPanel>
+                    </Expander.Header>
+
+                    <Grid Grid.Column="1" Margin="25,0,25,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Run ONT" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="0" Grid.Column="1" IsHitTestVisible="False"
+                                  IsChecked="{Binding SelectedONTAccount.IsActive}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="ONT Number" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedONTAccount.AccountNumber}" />
+
+                        <!--<TextBlock Grid.Row="2" Grid.Column="0" Text="ONT Cycle" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedONTAccount.Cycle}" />-->
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Ending Period" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedONTAccount.EndingPeriod, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedONTAccount.DueDate, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Notes" />
+                        <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" TextWrapping="Wrap" Foreground="Red" 
+                                   Text="{Binding SelectedONTAccount.Notes}" />
+                    </Grid>
+                </Expander>
+
+                <!-- Payroll -->
+                <Expander Style="{StaticResource BusinessDetailExpander}"
+                          Visibility="{Binding SelectedPayrollAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="Payroll Account" Width="150" Height="25" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding SelectedPayrollAccount.PayrollNumber}" Height="25" FontStyle="Italic" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <Grid Margin="25,0,20,10">
+                        <Grid.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Payroll Number" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedPayrollAccount.PayrollNumber}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Run Payroll" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding SelectedPayrollAccount.IsRunPayroll}" IsHitTestVisible="False" />
+                        
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Payroll Cycle" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedPayrollAccount.PayrollCycle}" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Pay PD7A" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding SelectedPayrollAccount.IsPayPD7A}" IsHitTestVisible="False" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="PD7A Cycle" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedPayrollAccount.PD7ACycle}" />
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Payroll Notes" />
+                        <TextBlock Grid.Row="5" Grid.Column="1" TextWrapping="Wrap" Foreground="Red"
+                                   Text="{Binding SelectedPayrollAccount.Notes}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="Run T4" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="1" Grid.Column="3" IsChecked="{Binding SelectedPayrollAccount.IsRunT4}" IsHitTestVisible="False" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="Run T4A" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="2" Grid.Column="3" IsChecked="{Binding SelectedPayrollAccount.IsRunT4A}" IsHitTestVisible="False" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="Run T5" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="3" Grid.Column="3" IsChecked="{Binding SelectedPayrollAccount.IsRunT5}" IsHitTestVisible="False" />
+
+                        <!-- Payout section -->
+                        <Rectangle Grid.Row="6" Grid.ColumnSpan="4"
+                            HorizontalAlignment="Stretch" Height="1" Stroke="#C4CFC7" Margin="0" />
+
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Run Payroll" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding SelectedPayrollAccount.IsRunPayout}" IsHitTestVisible="False" />
+
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Payout Notes" />
+                        <TextBlock Grid.Row="8" Grid.Column="1" TextWrapping="Wrap" Foreground="Red"
+                            Text="{Binding SelectedPayrollAccount.PayoutNotes}" />
+                    </Grid>
+                </Expander>
+
+                <!-- Client Payment: Regular Payment -->
+                <Expander Style="{StaticResource BusinessDetailExpander}"
+                          Background="#FFEFA0" BorderBrush="#FFD57E"
+                          Visibility="{Binding SelectedRegularPayment, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="Customer Payment" Width="170" Height="25" FontWeight="SemiBold" />
+                            <!--<TextBlock Text="{Binding SelectedRegularPayment.BankInfo}" Height="25" FontStyle="Italic" />-->
+                        </StackPanel>
+                    </Expander.Header>
+
+                    <Grid Grid.Column="1" Margin="25,0,25,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Run Payment" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="0" Grid.Column="1" IsHitTestVisible="False"
+                                  IsChecked="{Binding SelectedRegularPayment.IsActive}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Bank Info" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedRegularPayment.BankInfo}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Payment Amount" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedRegularPayment.PaymentAmount, StringFormat={}{0:C}}" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Payment Cycle" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedRegularPayment.PaymentCycle}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedRegularPayment.DueDate, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Notes" />
+                        <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" TextWrapping="Wrap" Foreground="Red" 
+                                   Text="{Binding SelectedRegularPayment.Notes}" />
+                    </Grid>
+                </Expander>
+
+                <!-- Client Payment: 2nd Payment -->
+                <Expander Style="{StaticResource BusinessDetailExpander}"
+                          Background="#FFEFA0" BorderBrush="#FFD57E"
+                          Visibility="{Binding SelectedClientPayment2nd, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="Customer Payment (2nd)" Width="170" Height="25" FontWeight="SemiBold" />
+                        </StackPanel>
+                    </Expander.Header>
+
+                    <Grid Grid.Column="1" Margin="25,0,25,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Run Payment" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="0" Grid.Column="1" IsHitTestVisible="False"
+                                  IsChecked="{Binding SelectedClientPayment2nd.IsActive}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Bank Info" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedClientPayment2nd.BankInfo}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Payment Amount" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedClientPayment2nd.PaymentAmount, StringFormat={}{0:C}}" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Payment Cycle" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedClientPayment2nd.PaymentCycle}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedClientPayment2nd.DueDate, StringFormat=MM-dd-yyyy}" />
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Notes" />
+                        <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" TextWrapping="Wrap" Foreground="Red" 
+                                   Text="{Binding SelectedClientPayment2nd.Notes}" />
+                    </Grid>
+                </Expander>
+                
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Column 4: Separator -->
+        <Rectangle Grid.Column="3" VerticalAlignment="Stretch" Width="1" Margin="0,0,7,0" Stroke="LightGray" />
+
+        <!-- Column 5: Right-handed Panel: Owners and Bank Infos -->
+        <Expander Grid.Column="4" Name="RightSideExpander" IsExpanded="False" ExpandDirection="Left">
+            <Expander.Triggers>
+                <EventTrigger RoutedEvent="Expander.Expanded">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation From="15" To="300" Duration="0:00:00.25"
+                                                 Storyboard.TargetName="RightSideExpander" 
+                                                 Storyboard.TargetProperty="Width"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="Expander.Collapsed">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation From="300" To="15" Duration="0:00:00.15"
+                                                 Storyboard.TargetName="RightSideExpander"
+                                                 Storyboard.TargetProperty="Width"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+            </Expander.Triggers>
+
+            <TabControl>
+                <!-- Business infos -->
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel>
+                            <TextBlock Text="Bank Infos"></TextBlock>
+                        </StackPanel>
+                    </TabItem.Header>
+                    <DockPanel LastChildFill="True">
+                        <StackPanel DockPanel.Dock="Top" Margin="0,10">
+                            <Button Command="{Binding OpenNewBusinessInfoDialogCommand}"
+                                    CommandParameter="{Binding SelectedBusiness.Id}"
+                                    Background="ForestGreen" Width="150" Margin="5,0,0,0">
+                                <Button.Content>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE8C7;" FontFamily="Segoe MDL2 Assets" FontSize="22" Margin="0,0,10,0" Foreground="White" />
+                                        <TextBlock Text="New Bank Infos" Foreground="White"/>
+                                    </StackPanel>
+                                </Button.Content>
+                            </Button>
+                        </StackPanel>
+                        <ListView ItemsSource="{Binding SelectedBusinessInfos, UpdateSourceTrigger=PropertyChanged}"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Focusable" Value="False"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentControl Width="275">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseDoubleClick">
+                                                <i:InvokeCommandAction Command="{Binding Path=DataContext.OpenEditBusinessInfoDialogCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+                                                                       CommandParameter="{Binding Id}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <Border BorderBrush="#C1C5CA" BorderThickness="1,1,2,2" Margin="0,0,0,5" Background="#C9CBFF">
+                                            <Border.Effect>
+                                                <DropShadowEffect Color="LightGray" ShadowDepth="1" BlurRadius="7">
+                                                </DropShadowEffect>
+                                            </Border.Effect>
+                                            <Grid Margin="5">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="250" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Grid.Row="0" FontWeight="DemiBold" TextWrapping="Wrap" Margin="0,0,0,5" 
+                                                           Text="{Binding Title, Converter={StaticResource nullToDashStringConverter}}"
+                                                           Visibility="{Binding Title, Converter={StaticResource contentNotEmptyToVisibilityConverter}, ConverterParameter=True}"/>
+                                                <TextBlock Grid.Row="1" TextWrapping="Wrap"
+                                                           Text="{Binding Content, Converter={StaticResource nullToDashStringConverter}}" />
+                                            </Grid>
+                                        </Border>
+                                    </ContentControl>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </DockPanel>
+                </TabItem>
+
+                <!-- Owners -->
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel>
+                            <TextBlock Text="Owner" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,10">
+                            <Button Command="{Binding OpenNewOwnerDialogCommand}"
+                                    CommandParameter="{Binding SelectedBusiness.Id}"
+                                    Width="120" Margin="5,0,0,0">
+                                <Button.Content>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="&#xE8FA;" FontFamily="Segoe MDL2 Assets" FontSize="22" Margin="0,0,5,0" Foreground="Green" />
+                                        <Label Content="New Owner" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </Button.Content>
+                            </Button>
+                        </StackPanel>
+
+                        <ListView DockPanel.Dock="Bottom"
+                                  ItemsSource="{Binding SelectedBusinessOwners, UpdateSourceTrigger=PropertyChanged}"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Focusable" Value="False"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentControl Width="275" ToolTip="Double-Click to Edit">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseDoubleClick">
+                                                <i:InvokeCommandAction Command="{Binding Path=DataContext.OpenEditOwnerDialogCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+                                                           CommandParameter="{Binding Id}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <Border BorderBrush="#C1C5CA" BorderThickness="1" Margin="0,0,0,5">
+                                            <Border.Effect>
+                                                <DropShadowEffect Color="LightGray" ShadowDepth="1" BlurRadius="7">
+                                                </DropShadowEffect>
+                                            </Border.Effect>
+                                            <StackPanel Margin="5">
+                                                <TextBlock Text="{Binding Name}" FontWeight="DemiBold" TextWrapping="Wrap" Margin="0,0,0,5" />
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="SIN" Width="70" />
+                                                    <TextBlock Text="{Binding SIN, Converter={StaticResource nullToDashStringConverter}, StringFormat={}{0:###-###-###}}" Width="180" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="DOB" Width="70" />
+                                                    <TextBlock Text="{Binding DOB, StringFormat=MM-dd-yyyy, Converter={StaticResource nullToDashStringConverter}}" Width="180" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="Phone 1" Width="70" />
+                                                    <TextBlock Text="{Binding PhoneNumber, Converter={StaticResource nullToDashStringConverter}, StringFormat={}{0:(###) ###-####}}" Width="180" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="Phone 2" Width="70" />
+                                                    <TextBlock Text="{Binding PhoneNumber2, Converter={StaticResource nullToDashStringConverter}, StringFormat={}{0:(###) ###-####}}" Width="180" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="Email" Width="70" />
+                                                    <TextBlock Text="{Binding Email, Converter={StaticResource nullToDashStringConverter}}" Width="180" TextWrapping="Wrap" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="Address" Width="70" />
+                                                    <TextBlock Text="{Binding Address, Converter={StaticResource nullToDashStringConverter}}" Width="180" TextWrapping="Wrap" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Notes}" Foreground="Red" Width="255" TextWrapping="Wrap" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </ContentControl>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                    </DockPanel>
+                </TabItem>
+            </TabControl>
+        </Expander>
+    </Grid>
+
+    <!--</DockPanel>-->
+</UserControl>

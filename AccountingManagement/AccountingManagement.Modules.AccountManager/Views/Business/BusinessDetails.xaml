@@ -1,0 +1,881 @@
+﻿<UserControl x:Class="AccountingManagement.Modules.AccountManager.Views.BusinessDetails"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AccountingManagement.Modules.AccountManager.Views"
+             xmlns:helper="clr-namespace:AccountingManagement.Modules.AccountManager.Helpers"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             xml:lang="en-CA"
+             mc:Ignorable="d" Height="800">
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterScreen" />
+            <Setter Property="ShowInTaskbar" Value="False" />
+            <Setter Property="ResizeMode" Value="NoResize" />
+            <Setter Property="SizeToContent" Value="WidthAndHeight" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+    </prism:Dialog.WindowStyle>
+
+    <Grid MinHeight="700">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="650" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="700" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Business Details -->
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="20,0,20,0">
+            <Border BorderThickness="0,0,0,2" BorderBrush="CornflowerBlue">
+                <TextBlock Text="Business Details" FontSize="22" Foreground="DarkBlue" />
+            </Border>
+
+            <Grid Margin="5,20,5,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Operating Name" />
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Business.OperatingName}" Margin="0,0,0,5" />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Legal Name" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Business.LegalName}" Margin="0,0,0,5" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Business Number" />
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Business.BusinessNumber}" Margin="0,0,0,5" />
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Business Date" />
+                <DatePicker Grid.Row="3" Grid.Column="1" Margin="0,0,0,5"
+                            SelectedDate="{Binding Business.BusinessDate, StringFormat=MM-dd-yyyy}">
+                </DatePicker>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Is Corporation" />
+                <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding Business.IsCorporation}" Margin="0,0,0,5" />
+
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Address" />
+                <TextBox Grid.Row="5" Grid.Column="1" Margin="0,0,0,5" TextWrapping="Wrap" AcceptsReturn="True"
+                         Text="{Binding Business.Address}" />
+
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Email" />
+                <TextBox Grid.Row="6" Grid.Column="1" Margin="0,0,0,5" TextWrapping="Wrap"
+                         ui:ControlHelper.PlaceholderText="Email addresses, comma-separated. E.g. mail@mail.com, mail2@mail.com"
+                         Text="{Binding Business.Email}" />
+
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="Email Contact" />
+                <TextBox Grid.Row="7" Grid.Column="1" Margin="0,0,0,5" TextWrapping="Wrap"
+                         Text="{Binding Business.EmailContact}" />
+
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="Is Active" />
+                <CheckBox Grid.Row="8" Grid.Column="1" IsChecked="{Binding Business.IsActive}" Margin="0,0,0,5" />
+
+            </Grid>
+        </StackPanel>
+
+        <!-- Owner Details -->
+        <StackPanel Grid.Row="1" Grid.Column="0" Margin="20,10">
+            <Border BorderThickness="0,0,0,2" BorderBrush="CornflowerBlue">
+                <TextBlock Text="Business Owners" FontSize="22" Foreground="DarkBlue" />
+            </Border>
+
+            <ListView x:Name="BusinessOwnerList" Margin="0,15,0,0" MaxHeight="200"
+                      ItemsSource="{Binding Business.BusinessOwners}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Focusable" Value="False" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl>
+                            <Border BorderThickness="1" BorderBrush="#7777ACF1" Padding="3" Width="600"
+                                    Background="Cornsilk">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="LightGray" ShadowDepth="1" BlurRadius="7" />
+                                </Border.Effect>
+                                <Grid Margin="5,0,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="{Binding Owner.Name}" FontSize="17" TextWrapping="Wrap" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Owner.SIN, Converter={StaticResource nullToDashStringConverter}, StringFormat=SIN: {0}}" Width="120" />
+                                            <TextBlock Text="{Binding Owner.DOB, Converter={StaticResource nullToDashStringConverter}, StringFormat=DOB: {0:MM-dd-yyyy}}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Width="100" Margin="10,0,0,0"
+                                            Command="{Binding Path=DataContext.RemoveBusinessOwnerCommand, ElementName=BusinessOwnerList}"
+                                            CommandParameter="{Binding Id}">
+                                        <Button.Content>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Label Content="&#xECC9;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="Red" Margin="0,0,5,0" />
+                                                <Label Content="Remove"/>
+                                            </StackPanel>
+                                        </Button.Content>
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </ContentControl>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Grid Margin="5,10,8,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" Text="{Binding OwnerFilterText, UpdateSourceTrigger=PropertyChanged}" />
+
+                <ComboBox Grid.Column="1" Width="370" Margin="7,2"
+                          IsReadOnly="False" IsEditable="True" AlternationCount="2"
+                          IsTextSearchEnabled="True" TextSearch.TextPath="Name"
+                          ItemsSource="{Binding OwnerFilterableList}"
+                          SelectedItem="{Binding SelectedOwner, UpdateSourceTrigger=PropertyChanged}">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="ComboBoxItem">
+                            <Style.Triggers>
+                                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                    <Setter Property="Background" Value="White" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Width="380">
+                                <TextBlock Text="{Binding Name}" FontSize="17" TextWrapping="Wrap" />
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding SIN, Converter={StaticResource nullToDashStringConverter}, StringFormat=SIN: {0}}" Width="120" />
+                                    <TextBlock Text="{Binding DOB, Converter={StaticResource nullToDashStringConverter}, StringFormat=DOB: {0:MM-dd-yyyy}}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Button Grid.Column="2" Width="100" Margin="10,0,0,0"
+                        Command="{Binding Path=DataContext.AddBusinessOwnerCommand, ElementName=BusinessOwnerList}"
+                        CommandParameter="{Binding SelectedOwner.Id}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="&#xECC8;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="Green" Margin="0,0,5,0"/>
+                            <Label Content="   Add   "/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Column="0" Grid.Row="2">
+            <TextBlock Margin="30,0,0,0" Foreground="Red" TextWrapping="Wrap"
+                       Text="{Binding ErrorMessageText}" 
+                       Visibility="{Binding ErrorMessageText, Converter={StaticResource nullToVisibilityConverter}}" />
+
+            <StackPanel Orientation="Horizontal" Margin="170,0,0,0">
+                <Button Width="100" Margin="0" Background="DodgerBlue" Foreground="White"
+                        Command="{Binding SaveBusinessCommand}" CommandParameter="{Binding Business}">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Save" Margin="0,0,10,0" />
+                        <Label Foreground="White" Content="Save" FontSize="18" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Button>
+                <Button Width="100" Margin="10,0,0,0" Content="Cancel" FontSize="18"
+                        Command="{Binding CloseDialogCommand}"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Separator -->
+        <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" VerticalAlignment="Stretch" Width="2"
+                   Stroke="LightGray" Margin="0,0,0,20"/>
+
+        <!-- Right-Panel: Business Accounts -->
+        <ScrollViewer Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" Margin="20,0,20,20"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,20,0">
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                    </Style>
+                </StackPanel.Resources>
+
+                <!-- HST -->
+                <Expander Margin="0,5" Background="#E4EFE7"
+                          BorderBrush="#C4CFC7" BorderThickness="1,1,2,4">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="HST" Width="150" FontWeight="SemiBold" FontSize="17" Margin="0,5" />
+                            <TextBlock Text="{Binding HSTAccount.AccountNumber}" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <StackPanel>
+                        <Rectangle HorizontalAlignment="Stretch" Height="1" Stroke="#C4CFC7" Margin="5,0" />
+                        <Button Content="New HST Account" Margin="10" 
+                                Visibility="{Binding HSTAccount, Converter={StaticResource nullToVisibilityReverseConverter}, ConverterParameter=True}"
+                                Command="{Binding AddNewHSTAccountCommand}" 
+                                CommandParameter="{Binding Business}">
+                        </Button>
+                        <Grid Margin="10,5,10,10"
+                              Visibility="{Binding HSTAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="*" MinWidth="150" />
+                                <ColumnDefinition Width="30" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Run HST" />
+                            <CheckBox Grid.Row="0" Grid.Column="1"
+                                  IsChecked="{Binding HSTAccount.IsActive}" />
+
+                            <TextBlock Grid.Row="0" Grid.Column="3" Text="Require Instalment" />
+                            <CheckBox Grid.Row="0" Grid.Column="4"
+                                  IsChecked="{Binding HSTAccount.InstalmentRequired}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="HST Number" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding HSTAccount.AccountNumber}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="3" Text="Instalment Amount" />
+                            <TextBox Grid.Row="1" Grid.Column="4" Text="{Binding HSTAccount.InstalmentAmount, StringFormat={}{0:C}}" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="HST Cycle" />
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,5,0,0" Width="130"
+                                  ItemsSource="{Binding HSTCycleList, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedValue="{Binding HSTAccount.Cycle}">
+                            </ComboBox>
+
+                            <TextBlock Grid.Row="2" Grid.Column="3" Text="Instalment Due Date" />
+                            <DatePicker Grid.Row="2" Grid.Column="4" SelectedDate="{Binding HSTAccount.InstalmentDueDate, StringFormat=MM-dd-yyyy}">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Ending Period" />
+                            <DatePicker Grid.Row="3" Grid.Column="1" SelectedDate="{Binding HSTAccount.EndingPeriod, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                            <DatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding HSTAccount.DueDate, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Assigned To" />
+                            <ComboBox Grid.Row="5" Grid.Column="1" Margin="0,5,0,0" Width="130"
+                                ItemsSource="{Binding AssignableUserAccounts}"
+                                SelectedValue="{Binding HSTAccount.UserAccountId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                SelectedValuePath="Id"
+                                DisplayMemberPath="DisplayName">
+                            </ComboBox>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Text="Notes" />
+                            <TextBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" 
+                                 Text="{Binding HSTAccount.Notes}" Foreground="Red" />
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
+                <!-- Corporation Tax -->
+                <Expander IsExpanded="False" Margin="0,5" Background="#E4EFE7"
+                          BorderBrush="#C4CFC7" BorderThickness="1,1,2,4">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Corporation Tax" Width="150" FontWeight="SemiBold" FontSize="17" Margin="0,5" />
+                            <TextBlock Text="{Binding CorporationTaxAccount.AccountNumber}" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <StackPanel>
+                        <Rectangle HorizontalAlignment="Stretch" Height="1" Stroke="#C4CFC7" Margin="5,0" />
+                        <Button Content="New Corporation Tax Account" Margin="10"
+                                Visibility="{Binding CorporationTaxAccount, Converter={StaticResource nullToVisibilityReverseConverter}, ConverterParameter=True}"
+                                Command="{Binding AddNewCorporationTaxAccountCommand}"
+                                CommandParameter="{Binding Business}">
+                        </Button>
+                        <Grid Margin="10,5,10,10"
+                              Visibility="{Binding CorporationTaxAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="*" MinWidth="150" />
+                                <ColumnDefinition Width="30" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Run Corp Tax" />
+                            <CheckBox Grid.Row="0" Grid.Column="1"
+                                  IsChecked="{Binding CorporationTaxAccount.IsActive}" />
+
+                            <TextBlock Grid.Row="0" Grid.Column="3" Text="Require Instalment" />
+                            <CheckBox Grid.Row="0" Grid.Column="4"
+                                  IsChecked="{Binding CorporationTaxAccount.InstalmentRequired}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Corp. Tax Number" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CorporationTaxAccount.AccountNumber}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="3" Text="Instalment Amount" />
+                            <TextBox Grid.Row="1" Grid.Column="4" Text="{Binding CorporationTaxAccount.InstalmentAmount, StringFormat={}{0:C}}" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Corp. Tax Cycle" />
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,5,0,0"
+                                      ItemsSource="{Binding CorporationTaxCycleList, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedValue="{Binding CorporationTaxAccount.Cycle}">
+                            </ComboBox>
+
+                            <TextBlock Grid.Row="2" Grid.Column="3" Text="Instalment Due Date" />
+                            <DatePicker Grid.Row="2" Grid.Column="4" SelectedDate="{Binding CorporationTaxAccount.InstalmentDueDate, StringFormat=MM-dd-yyyy}">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Ending Period" />
+                            <DatePicker Grid.Row="3" Grid.Column="1" SelectedDate="{Binding CorporationTaxAccount.EndingPeriod, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                            <DatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding CorporationTaxAccount.DueDate, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="Notes" />
+                            <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" 
+                                 Text="{Binding CorporationTaxAccount.Notes}" Foreground="Red" />
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+                
+                <!-- PST -->
+                <Expander IsExpanded="False" Margin="0,5" Background="#E4EFE7"
+                          BorderBrush="#C4CFC7" BorderThickness="1,1,2,4">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="PST" Width="150" FontWeight="SemiBold" FontSize="17" Margin="0,5" />
+                            <TextBlock Text="{Binding PSTAccount.AccountNumber}" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <StackPanel>
+                        <Rectangle HorizontalAlignment="Stretch" Height="1" Stroke="#C4CFC7" Margin="5,0" />
+                        <Button Content="New PST Account" Margin="10"
+                                Visibility="{Binding PSTAccount, Converter={StaticResource nullToVisibilityReverseConverter}, ConverterParameter=True}"
+                                Command="{Binding AddNewPSTAccountCommand}"
+                                CommandParameter="{Binding Business}">
+                        </Button>
+                        <Grid Margin="10,5,10,10"
+                              Visibility="{Binding PSTAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="*" MinWidth="150" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Run PST" />
+                            <CheckBox Grid.Row="0" Grid.Column="1"
+                                  IsChecked="{Binding PSTAccount.IsActive}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="PST Number" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PSTAccount.AccountNumber}" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="PST Cycle" />
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,5,0,0"
+                                      ItemsSource="{Binding PSTCycleList, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedValue="{Binding PSTAccount.Cycle}">
+                            </ComboBox>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Ending Period" />
+                            <DatePicker Grid.Row="3" Grid.Column="1" SelectedDate="{Binding PSTAccount.EndingPeriod, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                            <DatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding PSTAccount.DueDate, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="Notes" />
+                            <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" 
+                                 Text="{Binding PSTAccount.Notes}" Foreground="Red" />
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
+                <!-- WSIB -->
+                <Expander IsExpanded="False" Margin="0,5" Background="#E4EFE7"
+                          BorderBrush="#C4CFC7" BorderThickness="1,1,2,4">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="WSIB/WCB" Width="150" FontWeight="SemiBold" FontSize="17" Margin="0,5" />
+                            <TextBlock Text="{Binding WSIBAccount.AccountNumber}" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <StackPanel>
+                        <Rectangle HorizontalAlignment="Stretch" Height="1" Stroke="#C4CFC7" Margin="5,0" />
+                        <Button Content="New WSIB Account" Margin="10"
+                                Visibility="{Binding WSIBAccount, Converter={StaticResource nullToVisibilityReverseConverter}, ConverterParameter=True}"
+                                Command="{Binding AddNewWSIBAccountCommand}"
+                                CommandParameter="{Binding Business}">
+                        </Button>
+                        <Grid Margin="10,5,10,10"
+                              Visibility="{Binding WSIBAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="*" MinWidth="150" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Run WSIB/WCB" />
+                            <CheckBox Grid.Row="0" Grid.Column="1"
+                                  IsChecked="{Binding WSIBAccount.IsActive}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="WSIB/WCB Number" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding WSIBAccount.AccountNumber}" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="WSIB/WCB Cycle" />
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,5,0,0"
+                                      ItemsSource="{Binding PSTCycleList, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedValue="{Binding WSIBAccount.Cycle}">
+                            </ComboBox>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Ending Period" />
+                            <DatePicker Grid.Row="3" Grid.Column="1" SelectedDate="{Binding WSIBAccount.EndingPeriod, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                            <DatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding WSIBAccount.DueDate, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="Notes" />
+                            <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" 
+                                 Text="{Binding WSIBAccount.Notes}" Foreground="Red" />
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
+                <!-- LIQ -->
+                <Expander IsExpanded="False" Margin="0,5" Background="#E4EFE7"
+                          BorderBrush="#C4CFC7" BorderThickness="1,1,2,4">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="LIQ" Width="150" FontWeight="SemiBold" FontSize="17" Margin="0,5" />
+                            <TextBlock Text="{Binding LIQAccount.AccountNumber}" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <StackPanel>
+                        <Rectangle HorizontalAlignment="Stretch" Height="1" Stroke="#C4CFC7" Margin="5,0" />
+                        <Button Content="New LIQ Account" Margin="10"
+                                Visibility="{Binding LIQAccount, Converter={StaticResource nullToVisibilityReverseConverter}, ConverterParameter=True}"
+                                Command="{Binding AddNewLIQAccountCommand}"
+                                CommandParameter="{Binding Business}">
+                        </Button>
+                        <Grid Margin="10,5,10,10"
+                              Visibility="{Binding LIQAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="*" MinWidth="150" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Run LIQ" />
+                            <CheckBox Grid.Row="0" Grid.Column="1"
+                                  IsChecked="{Binding LIQAccount.IsActive}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="LIQ Number" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding LIQAccount.AccountNumber}" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="LIQ Cycle" />
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,5,0,0"
+                                      ItemsSource="{Binding PSTCycleList, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedValue="{Binding LIQAccount.Cycle}">
+                            </ComboBox>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Ending Period" />
+                            <DatePicker Grid.Row="3" Grid.Column="1" SelectedDate="{Binding LIQAccount.EndingPeriod, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                            <DatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding LIQAccount.DueDate, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="Notes" />
+                            <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" 
+                                 Text="{Binding LIQAccount.Notes}" Foreground="Red" />
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
+                <!-- ONT -->
+                <Expander IsExpanded="False" Margin="0,5" Background="#E4EFE7"
+                          BorderBrush="#C4CFC7" BorderThickness="1,1,2,4">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="ONT" Width="150" FontWeight="SemiBold" FontSize="17" Margin="0,5" />
+                            <TextBlock Text="{Binding ONTAccount.AccountNumber}" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <StackPanel>
+                        <Rectangle HorizontalAlignment="Stretch" Height="1" Stroke="#C4CFC7" Margin="5,0" />
+                        <Button Content="New ONT Account" Margin="10"
+                                Visibility="{Binding ONTAccount, Converter={StaticResource nullToVisibilityReverseConverter}, ConverterParameter=True}"
+                                Command="{Binding AddNewONTAccountCommand}"
+                                CommandParameter="{Binding Business}">
+                        </Button>
+                        <Grid Margin="10,5,10,10"
+                              Visibility="{Binding ONTAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="*" MinWidth="150" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Run ONT" />
+                            <CheckBox Grid.Row="0" Grid.Column="1"
+                                  IsChecked="{Binding ONTAccount.IsActive}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="ONT Number" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ONTAccount.AccountNumber}" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="ONT Cycle" />
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,5,0,0"
+                                      ItemsSource="{Binding PSTCycleList, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedValue="{Binding ONTAccount.Cycle}">
+                            </ComboBox>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Ending Period" />
+                            <DatePicker Grid.Row="3" Grid.Column="1" SelectedDate="{Binding ONTAccount.EndingPeriod, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                            <DatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding ONTAccount.DueDate, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="Notes" />
+                            <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" 
+                                 Text="{Binding ONTAccount.Notes}" Foreground="Red" />
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
+                <!-- Payroll Account -->
+                <Expander Margin="0,5" Background="#E4EFE7"
+                          BorderBrush="#C4CFC7" BorderThickness="1,1,2,4">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Payroll" Width="150" FontWeight="SemiBold" FontSize="17" Margin="0,5" />
+                            <TextBlock Text="{Binding PayrollAccount.PayrollNumber}" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <StackPanel>
+                        <Rectangle HorizontalAlignment="Stretch" Height="1" Stroke="#C4CFC7" Margin="5,0" />
+                        <Button Content="New Payroll Account" Margin="10"
+                                Visibility="{Binding PayrollAccount, Converter={StaticResource nullToVisibilityReverseConverter}, ConverterParameter=True}"
+                                Command="{Binding AddNewPayrollAccountCommand}"
+                                CommandParameter="{Binding Business}">
+                        </Button>
+
+                        <Grid Margin="10,5,10,10" Visibility="{Binding PayrollAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Run Payroll" />
+                            <CheckBox Grid.Row="0" Grid.Column="1" Margin="0,5,0,0"
+                                  IsChecked="{Binding PayrollAccount.IsRunPayroll}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Payroll Number" />
+                            <TextBox Grid.Row="1" Grid.Column="1" 
+                                 Text="{Binding PayrollAccount.PayrollNumber}" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Payroll Cycle" />
+                            <ComboBox Grid.Row="2" Grid.Column="1" Width="150" Margin="0,5,0,0"
+                                      ItemsSource="{Binding PayrollCycleList, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedValue="{Binding PayrollAccount.PayrollCycle}">
+                            </ComboBox>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Pay PD7A" />
+                            <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding PayrollAccount.IsPayPD7A}" />
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="PD7A Cycle" />
+                            <ComboBox Grid.Row="4" Grid.Column="1" Width="150" 
+                                      ItemsSource="{Binding PD7ACycleList, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedValue="{Binding PayrollAccount.PD7ACycle}">
+                            </ComboBox>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Notes" />
+                            <TextBox Grid.Row="5" Grid.Column="1" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True"
+                                 Text="{Binding PayrollAccount.Notes}" Foreground="Red" />
+
+                        </Grid>
+
+                        <Rectangle HorizontalAlignment="Stretch" Height="1" Stroke="#C4CFC7" Margin="5,5" />
+                        <Grid Margin="10,5,10,10" Visibility="{Binding PayrollAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25" />
+                                <RowDefinition Height="25" />
+                                <RowDefinition Height="25" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Run T4" />
+                            <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding PayrollAccount.IsRunT4}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Run T4A" />
+                            <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding PayrollAccount.IsRunT4A}" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Run T5" />
+                            <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding PayrollAccount.IsRunT5}" />
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Year End Notes" />
+                            <TextBox Grid.Row="3" Grid.Column="1" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True"
+                                     Text="{Binding PayrollAccount.YearEndNotes}" Foreground="Red" />
+                        </Grid>
+
+                        <Rectangle HorizontalAlignment="Stretch" Height="1" Stroke="#C4CFC7" Margin="5,5" />
+                        <Grid Margin="10,5,10,10" Visibility="{Binding PayrollAccount, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Run Payroll Payout" FontWeight="SemiBold" />
+                            <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding PayrollAccount.IsRunPayout}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Notes" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True"
+                                    Text="{Binding PayrollAccount.PayoutNotes}" Foreground="Red" />
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
+
+                <!-- Client Payment -->
+                <Expander IsExpanded="False" Margin="0,5" Background="#FFEFA0"
+                          BorderBrush="#FFD57E" BorderThickness="1,1,2,4">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Customer Payment" Width="200" FontWeight="SemiBold" FontSize="17" Margin="0,5" />
+                            <!--<TextBlock Text="{Binding RegularPayment.BankInfo}" />-->
+                        </StackPanel>
+                    </Expander.Header>
+                    <StackPanel>
+                        <Rectangle HorizontalAlignment="Stretch" Height="1" Stroke="#FFD57E" Margin="5,0" />
+                        <Button Content="Create Customer Payment" Margin="10"
+                                Visibility="{Binding RegularPayment, Converter={StaticResource nullToVisibilityReverseConverter}, ConverterParameter=True}"
+                                Command="{Binding AddNewRegularPaymentCommand}"
+                                CommandParameter="{Binding Business}">
+                        </Button>
+                        <Grid Margin="10,5,10,10"
+                              Visibility="{Binding RegularPayment, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="*" MinWidth="150" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Run Payment" />
+                            <CheckBox Grid.Row="0" Grid.Column="1"
+                                  IsChecked="{Binding RegularPayment.IsActive}"
+                                  Command="{Binding CustomerPaymentActivationChangedCommand}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Bank Info" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding RegularPayment.BankInfo}" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Payment Amount" />
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding RegularPayment.PaymentAmount, StringFormat={}{0:C}}" Margin="0,5,0,0" />
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Payment Cycle" />
+                            <ComboBox Grid.Row="3" Grid.Column="1" Margin="0,5,0,0"
+                                      ItemsSource="{Binding ClientPaymentCycleList, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedValue="{Binding RegularPayment.PaymentCycle}">
+                            </ComboBox>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                            <DatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding RegularPayment.DueDate, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="Notes" />
+                            <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" 
+                                 Text="{Binding RegularPayment.Notes}" Foreground="Red" />
+
+                            <Rectangle Grid.Row="6" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Height="1" Stroke="#FFD57E" Margin="0,5" />
+
+                            <TextBlock Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Text="Progress Note" />
+                            <TextBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" 
+                                 Text="{Binding RegularPayment.TmpConfirmationText}" Foreground="Red" />
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="Receipt Sent" />
+                            <CheckBox Grid.Row="8" Grid.Column="1" IsHitTestVisible="False"
+                                  ToolTip="This can only be updated from Customer Payment Window"
+                                  IsChecked="{Binding RegularPayment.TmpReceiptEmailSent}"/>
+                        </Grid>
+
+                    </StackPanel>
+                </Expander>
+
+                <!-- Client Payment 2nd -->
+                <Expander IsExpanded="False" Margin="0,5" Background="#FFEFA0"
+                          BorderBrush="#FFD57E" BorderThickness="1,1,2,4">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Customer Payment (2nd)" Width="200" FontWeight="SemiBold" FontSize="17" Margin="0,5" />
+                            <!--<TextBlock Text="{Binding ClientPayment2nd.BankInfo}" />-->
+                        </StackPanel>
+                    </Expander.Header>
+                    <StackPanel>
+                        <Rectangle HorizontalAlignment="Stretch" Height="1" Stroke="#FFD57E" Margin="5,0" />
+                        <Button Content="Create Customer Payment" Margin="10"
+                                Visibility="{Binding ClientPayment2nd, Converter={StaticResource nullToVisibilityReverseConverter}, ConverterParameter=True}"
+                                Command="{Binding AddNewClientPayment2ndCommand}"
+                                CommandParameter="{Binding Business}">
+                        </Button>
+                        <Grid Margin="10,5,10,10"
+                              Visibility="{Binding ClientPayment2nd, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="*" MinWidth="150" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Run Payment" />
+                            <CheckBox Grid.Row="0" Grid.Column="1"
+                                  IsChecked="{Binding ClientPayment2nd.IsActive}"
+                                  Command="{Binding ClientPayment2ndActivationChangedCommand}" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Bank Info" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ClientPayment2nd.BankInfo}" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Payment Amount" />
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ClientPayment2nd.PaymentAmount, StringFormat={}{0:C}}" Margin="0,5,0,0" />
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Payment Cycle" />
+                            <ComboBox Grid.Row="3" Grid.Column="1" Margin="0,5,0,0"
+                                      ItemsSource="{Binding ClientPaymentCycleList, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedValue="{Binding ClientPayment2nd.PaymentCycle}">
+                            </ComboBox>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Due Date" />
+                            <DatePicker Grid.Row="4" Grid.Column="1" SelectedDate="{Binding ClientPayment2nd.DueDate, StringFormat=MM-dd-yyyy}" Margin="0,5,0,0">
+                            </DatePicker>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="Notes" />
+                            <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" 
+                                 Text="{Binding ClientPayment2nd.Notes}" Foreground="Red" />
+
+                            <Rectangle Grid.Row="6" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Height="1" Stroke="#FFD57E" Margin="0,5" />
+
+                            <TextBlock Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Text="Progress Note" />
+                            <TextBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" 
+                                 Text="{Binding ClientPayment2nd.TmpConfirmationText}" Foreground="Red" />
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="Receipt Sent" />
+                            <CheckBox Grid.Row="8" Grid.Column="1" IsHitTestVisible="False"
+                                  ToolTip="This can only be updated from Customer Payment Window"
+                                  IsChecked="{Binding ClientPayment2nd.TmpReceiptEmailSent}"/>
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+
+</UserControl>

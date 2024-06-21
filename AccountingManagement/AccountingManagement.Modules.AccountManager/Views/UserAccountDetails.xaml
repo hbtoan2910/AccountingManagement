@@ -1,0 +1,115 @@
+﻿<UserControl x:Class="AccountingManagement.Modules.AccountManager.Views.UserAccountDetails"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AccountingManagement.Modules.AccountManager.Views"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="700">
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ShowInTaskbar" Value="False" />
+            <Setter Property="ResizeMode" Value="NoResize" />
+            <Setter Property="SizeToContent" Value="WidthAndHeight" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+    </prism:Dialog.WindowStyle>
+    <StackPanel MinHeight="450" Width="700" >
+        <Border BorderBrush="#7579E7" BorderThickness="0,0,0,2" Margin="20,0,20,20">
+            <TextBlock Text="User Account" FontSize="24" FontWeight="SemiBold" Foreground="CornflowerBlue" />
+        </Border>
+
+        <Grid Margin="30,0,30,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="180" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Username" VerticalAlignment="Center" />
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding UserAccount.Username}" />
+            <!--<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding UserAccount.Username}" />-->
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Display Name" VerticalAlignment="Center" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding UserAccount.DisplayName}" Margin="0,3,0,0" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Email" VerticalAlignment="Center" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding UserAccount.Email}" Margin="0,3,0,0" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="PhoneNumber" VerticalAlignment="Center" />
+            <!--<TextBox Grid.Row="3" Grid.Column="1" Text="{Binding UserAccount.PhoneNumber}" Margin="0,3,0,0" />-->
+            <xctk:MaskedTextBox Grid.Row="3" Grid.Column="1" Margin="0,3,0,0" Style="{StaticResource {x:Type TextBox}}"
+                                Text="{Binding UserAccount.PhoneNumber}" Mask="(000) 000-0000"/>
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Active" VerticalAlignment="Center"
+                       Visibility="{Binding IsAdmin, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=True}" />
+            <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding UserAccount.Active}" Margin="0,3,0,0"
+                      Visibility="{Binding IsAdmin, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=True}" />
+
+            <Rectangle Grid.Row="5" Grid.ColumnSpan="2" Height="1" HorizontalAlignment="Stretch" Stroke="LightGray" Margin="0,5" />
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Old Password" VerticalAlignment="Center"
+                       Visibility="{Binding IsNewAccount, Converter={StaticResource boolToVisibilityReverseConverter}, ConverterParameter=True}"/>
+            <PasswordBox Grid.Row="6" Grid.Column="1" x:Name="OldPassword" Margin="0,3,0,0"
+                         Visibility="{Binding IsNewAccount, Converter={StaticResource boolToVisibilityReverseConverter}, ConverterParameter=True}"/>
+            
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="New Password" VerticalAlignment="Center" />
+            <PasswordBox Grid.Row="7" Grid.Column="1" x:Name="NewPassword" Margin="0,3,0,0" />
+
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="Confirm New Password" VerticalAlignment="Center" />
+            <PasswordBox Grid.Row="8" Grid.Column="1" x:Name="ConfirmNewPassword" Margin="0,3,0,3" />
+            <Rectangle Grid.Row="9" Grid.ColumnSpan="2" Height="1" HorizontalAlignment="Stretch" Stroke="LightGray" Margin="0,5" />
+
+            <StackPanel Grid.Row="10" Grid.Column="1">
+                <DockPanel LastChildFill="True" Margin="0,20,0,0">
+                    <Button DockPanel.Dock="Right" Width="95" Background="Orange" Foreground="White"
+                            Command="{Binding DeleteUserAccountCommand}"
+                            CommandParameter="{Binding UserAccount}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Delete" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Button>
+                    
+                    <Button Width="95" Margin="0" Background="DodgerBlue" Foreground="White" FontWeight="Bold"
+                            Command="{Binding SaveUserAccountCommand}">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource passwordBoxesToPasswordBoxList}">
+                                <Binding ElementName="OldPassword" />
+                                <Binding ElementName="NewPassword" />
+                                <Binding ElementName="ConfirmNewPassword" />
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Save" Margin="0,0,10,0" />
+                            <Label Foreground="White" Content="Save" />
+                        </StackPanel>
+                    </Button>
+                    <Button Width="95" Margin="10,0,0,0" Content="Cancel"
+                            Command="{Binding CloseDialogCommand}"/>
+
+                </DockPanel>
+                <StackPanel Margin="0,10,0,0">
+                    <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" 
+                               Visibility="{Binding ErrorMessage, Converter={StaticResource nullToVisibilityConverter}}" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{5304C31D-82EA-4410-A987-CBF483A91D95}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountingManagement.Modules.ModuleName.Tests", "AccountingManagement\Tests\AccountingManagement.Modules.ModuleName.Tests\AccountingManagement.Modules.ModuleName.Tests.csproj", "{E5C08CB0-1914-49E2-93E8-9113EED6B6A1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountingManagement", "AccountingManagement\AccountingManagement\AccountingManagement.csproj", "{6A9C99C1-2ABB-4636-966C-CD66A55AE5F5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountingManagement.Core", "AccountingManagement\AccountingManagement.Core\AccountingManagement.Core.csproj", "{EF79561C-7FB0-4814-B752-8B4EEEBE12BF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountingManagement.DataAccess", "AccountingManagement\AccountingManagement.DataAccess\AccountingManagement.DataAccess.csproj", "{B781CAB5-63EE-422D-B38B-5FADE7BE1C2E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountingManagement.Services", "AccountingManagement\AccountingManagement.Services\AccountingManagement.Services.csproj", "{E0517A29-1A48-44F2-B23C-B7741F5378A4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountingManagement.Modules.AccountManager", "AccountingManagement\AccountingManagement.Modules.AccountManager\AccountingManagement.Modules.AccountManager.csproj", "{F65A150B-ABBE-4AAB-9172-378A0A61A6AF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E5C08CB0-1914-49E2-93E8-9113EED6B6A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5C08CB0-1914-49E2-93E8-9113EED6B6A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5C08CB0-1914-49E2-93E8-9113EED6B6A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5C08CB0-1914-49E2-93E8-9113EED6B6A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A9C99C1-2ABB-4636-966C-CD66A55AE5F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A9C99C1-2ABB-4636-966C-CD66A55AE5F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A9C99C1-2ABB-4636-966C-CD66A55AE5F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A9C99C1-2ABB-4636-966C-CD66A55AE5F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF79561C-7FB0-4814-B752-8B4EEEBE12BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF79561C-7FB0-4814-B752-8B4EEEBE12BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF79561C-7FB0-4814-B752-8B4EEEBE12BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF79561C-7FB0-4814-B752-8B4EEEBE12BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B781CAB5-63EE-422D-B38B-5FADE7BE1C2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B781CAB5-63EE-422D-B38B-5FADE7BE1C2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B781CAB5-63EE-422D-B38B-5FADE7BE1C2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B781CAB5-63EE-422D-B38B-5FADE7BE1C2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0517A29-1A48-44F2-B23C-B7741F5378A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0517A29-1A48-44F2-B23C-B7741F5378A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0517A29-1A48-44F2-B23C-B7741F5378A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0517A29-1A48-44F2-B23C-B7741F5378A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F65A150B-ABBE-4AAB-9172-378A0A61A6AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F65A150B-ABBE-4AAB-9172-378A0A61A6AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F65A150B-ABBE-4AAB-9172-378A0A61A6AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F65A150B-ABBE-4AAB-9172-378A0A61A6AF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E5C08CB0-1914-49E2-93E8-9113EED6B6A1} = {5304C31D-82EA-4410-A987-CBF483A91D95}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E4BC78AF-18BD-4363-8B22-1220EB5BD571}
+	EndGlobalSection
+EndGlobal

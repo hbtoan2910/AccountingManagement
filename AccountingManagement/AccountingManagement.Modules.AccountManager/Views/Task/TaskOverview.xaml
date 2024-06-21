@@ -1,0 +1,193 @@
+﻿<UserControl x:Class="AccountingManagement.Modules.AccountManager.Views.TaskOverview"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AccountingManagement.Modules.AccountManager.Views"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Margin="5,5,5,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="15,0,3,0">
+            <Rectangle VerticalAlignment="Stretch" Width="1" Stroke="Gray"/>
+        </StackPanel>
+
+        <Grid Grid.Column="1" Margin="0,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Filter & Menu rows -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,0">
+                <StackPanel Width="360" Margin="0,0,5,0">
+                    <TextBox Text="{Binding BusinessFilterText, UpdateSourceTrigger=PropertyChanged}"
+                         ui:ControlHelper.PlaceholderText="Search by Business Legal or Operating Name" />
+                </StackPanel>
+
+                <Button Command="{Binding RefreshViewCommand}" Width="40" Margin="1,0,0,0">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="22" Margin="0,0,5,0" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Stroke="LightGray" Margin="5,0,10,0"/>
+
+                <StackPanel Margin="0,0,0,0">
+                    <CheckBox Content="Have Tasks" Style="{StaticResource {x:Type ToggleButton}}"
+                          IsChecked="{Binding FilterHasTasks, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Stroke="LightGray" Margin="10,0,10,0"/>
+
+                <TextBlock Text="Show Only" VerticalAlignment="Center" />
+                <ComboBox Margin="5,0,0,0" Width="120" IsEditable="True"
+                          ItemsSource="{Binding UserAccounts}" DisplayMemberPath="DisplayName"
+                          SelectedValue="{Binding SelectedUserAccount, UpdateSourceTrigger=PropertyChanged}">
+                </ComboBox>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Stroke="LightGray" Margin="10,0,10,0"/>
+
+                <Grid Margin="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <RadioButton Grid.Column="0" Content="All" Style="{StaticResource {x:Type ToggleButton}}" Width="70" Margin="0,0,3,0"
+                                GroupName="TaskStatusFilter" IsChecked="True" />
+                    <RadioButton Grid.Column="1" Content="New" Style="{StaticResource {x:Type ToggleButton}}" Width="70" Margin="0,0,3,0"
+                                GroupName="TaskStatusFilter" IsChecked="{Binding TaskStatusFilterNew, UpdateSourceTrigger=PropertyChanged}"/>
+                    <RadioButton Grid.Column="2" Content="Done" Style="{StaticResource {x:Type ToggleButton}}" Width="70"
+                                GroupName="TaskStatusFilter" IsChecked="{Binding TaskStatusFilterDone, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+                <Rectangle VerticalAlignment="Stretch" Width="1" Stroke="LightGray" Margin="10,0,10,0"/>
+            </StackPanel>
+
+            <Rectangle Grid.Row="1" Height="1" Stroke="LightGray" Margin="0,7,0,7" />
+
+            <!-- Task Overview main content -->
+            <ListView Grid.Row="2" x:Name="WorkTasksListView" AlternationCount="2"
+                  ItemsSource="{Binding WorkTasksView, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedWork}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="Focusable" Value="False" />
+                        <Style.Triggers>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                <Setter Property="Background" Value="#FFE1E5EA"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl Margin="0,0,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="350" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,5">
+                                    <StackPanel Margin="0,0,5,0">
+                                        <Button ToolTip="Move to top" Style="{StaticResource 20pIconButton}" Content="&#xF0AD;" Background="#FA9905"
+                                                Command="{Binding Path=DataContext.MoveWorkToTopCommand, ElementName=WorkTasksListView}"
+                                                CommandParameter="{Binding .}">
+                                        </Button>
+                                        <Button ToolTip="Move up" Style="{StaticResource 20pIconButton}" Content="&#xE74A;" Background="#9EDE73"
+                                                Command="{Binding Path=DataContext.MoveWorkUpCommand, ElementName=WorkTasksListView}"
+                                                CommandParameter="{Binding .}">
+                                        </Button>
+                                        <Button ToolTip="Move down" Style="{StaticResource 20pIconButton}" Content="&#xE74B;" Background="#9EDE73"
+                                                Command="{Binding Path=DataContext.MoveWorkDownCommand, ElementName=WorkTasksListView}"
+                                                CommandParameter="{Binding .}">
+                                        </Button>
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <ui:HyperlinkButton Content="{Binding Business.OperatingName}" FontSize="17" Padding="0"
+                                                            Command="{Binding Path=DataContext.NavigateToBusinessOverviewCommand, ElementName=WorkTasksListView}"
+                                                            CommandParameter="{Binding Business}" />
+                                        <TextBlock Text="{Binding Business.LegalName}" FontSize="14" />
+                                        <TextBlock Text="{Binding Business.BusinessNumber}" FontSize="14" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <Rectangle Grid.Column="1" Width="1" Stroke="LightGray" Margin="5,0,5,0" />
+
+                                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                    <StackPanel Orientation="Vertical">
+                                        
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <Button ToolTip="Create New Task" Style="{StaticResource IconButton}" Content="&#xE82E;" Width="40"
+                                            Command="{Binding Path=DataContext.OpenNewTaskDialogCommand, ElementName=WorkTasksListView}"
+                                            CommandParameter="{Binding .}">
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+                                <Rectangle Grid.Column="3" Width="1" Stroke="LightGray" Margin="5,0,5,0" />
+
+                                <ListView Grid.Column="4" ItemsSource="{Binding Tasks, UpdateSourceTrigger=PropertyChanged}"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="Focusable" Value="False" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <ContentControl>
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="MouseDoubleClick">
+                                                        <i:InvokeCommandAction Command="{Binding Path=DataContext.OpenEditTaskDialogCommand, ElementName=WorkTasksListView}" 
+                                                                               CommandParameter="{Binding .}"/>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                                <Border BorderThickness="1" BorderBrush="#7777ACF1" Margin="0,3,0,3"
+                                                    Background="{Binding TaskStatus, Converter={StaticResource taskStatusToColorConverter}}">
+                                                    <Border.Effect>
+                                                        <DropShadowEffect Color="#7777ACF1" ShadowDepth="1" BlurRadius="7">
+                                                        </DropShadowEffect>
+                                                    </Border.Effect>
+                                                    <StackPanel Width="300" MinHeight="80"
+                                                            ToolTip="{Binding LastUpdated}">
+                                                        <TextBlock Text="{Binding UserAccount.DisplayName}" FontWeight="SemiBold" Padding="3" />
+                                                        <!--<TextBlock Text="{Binding UserAccount.DisplayName}" FontWeight="SemiBold" Background="#FFCC29" Padding="3" />-->
+                                                        <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="3,0,3,0" />
+                                                        <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" Margin="3,0,3,0" Foreground="Red" FontWeight="SemiBold"
+                                                                   Visibility="{Binding Notes, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </ContentControl>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+                        </ContentControl>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </Grid>
+    
+</UserControl>

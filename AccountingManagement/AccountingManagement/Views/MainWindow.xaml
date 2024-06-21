@@ -1,0 +1,17 @@
+﻿<Window x:Class="AccountingManagement.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        ui:TitleBar.Background="CornflowerBlue"
+        xmlns:core="clr-namespace:AccountingManagement.Core;assembly=AccountingManagement.Core"
+        xml:lang="en-CA"
+        Title="{Binding Title}" Height="400" Width="700"
+        WindowStartupLocation="CenterScreen"
+        WindowState="{Binding WinState}" >
+    <Grid>
+        <ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.MainWindowRegion}" />
+    </Grid>
+</Window>

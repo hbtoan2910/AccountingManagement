@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>AccountingManagement.Modules.AccountManager</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="28.0.1" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.1.0" />
+    <PackageReference Include="ModernWpfUI" Version="0.9.4" />
+    <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AccountingManagement.Core\AccountingManagement.Core.csproj" />
+    <ProjectReference Include="..\AccountingManagement.DataAccess\AccountingManagement.DataAccess.csproj" />
+    <ProjectReference Include="..\AccountingManagement.Services\AccountingManagement.Services.csproj" />
+  </ItemGroup>
+</Project>

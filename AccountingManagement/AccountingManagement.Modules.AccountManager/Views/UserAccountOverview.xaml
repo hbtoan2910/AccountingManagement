@@ -1,0 +1,89 @@
+﻿<UserControl x:Class="AccountingManagement.Modules.AccountManager.Views.UserAccountOverview"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AccountingManagement.Modules.AccountManager.Views"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Margin="5,5,5,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="15,0,7,0">
+            <Rectangle VerticalAlignment="Stretch" Width="1" Stroke="Gray"/>
+        </StackPanel>
+
+        <Grid Grid.Column="1" Margin="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0">
+                <StackPanel Orientation="Horizontal">
+                </StackPanel>
+                <Rectangle Height="1" Stroke="LightGray" Margin="0,7" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="1">
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <TextBlock Text="Username" Width="150" FontWeight="Bold" />
+                    <TextBlock Text="Display Name" Width="250" FontWeight="Bold" />
+                    <TextBlock Text="Phone Number" Width="150" FontWeight="Bold" />
+                    <TextBlock Text="Role" Width="120" FontWeight="Bold" />
+                    <TextBlock Text="Is Active" Width="70" FontWeight="Bold" />
+                </StackPanel>
+                <Rectangle Height="1" Stroke="LightGray" Margin="0,10,0,10" />
+            </StackPanel>
+
+            <ListView Grid.Row="2" x:Name="UserAccountListView" AlternationCount="2"
+                      ItemsSource="{Binding UserAccountView}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="Focusable" Value="False" />
+                        <Style.Triggers>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                <Setter Property="Background" Value="#FFE1E5EA"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <i:InvokeCommandAction Command="{Binding Path=DataContext.OpenEditUserAccountDialogCommand, ElementName=UserAccountListView}" 
+                                                           CommandParameter="{Binding .}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <Grid MinHeight="35">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="250" />
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="70"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" Text="{Binding Username}" />
+                                <TextBlock Grid.Column="1" Text="{Binding DisplayName}" />
+                                <TextBlock Grid.Column="2" Text="{Binding PhoneNumber}" />
+                                <TextBlock Grid.Column="3" Text="{Binding Role}" />
+                                <TextBlock Grid.Column="4" Text="{Binding Active}" />
+                            </Grid>
+                        </ContentControl>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </Grid>
+</UserControl>

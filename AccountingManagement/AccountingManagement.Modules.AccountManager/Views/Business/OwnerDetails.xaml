@@ -1,0 +1,288 @@
+﻿<UserControl x:Class="AccountingManagement.Modules.AccountManager.Views.OwnerDetails"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AccountingManagement.Modules.AccountManager.Views"
+             xmlns:helper="clr-namespace:AccountingManagement.Modules.AccountManager.Helpers"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             xml:lang="en-CA"
+             ui:ControlHelper.CornerRadius="15"
+             mc:Ignorable="d" 
+             d:DesignHeight="560" d:DesignWidth="1000"
+             d:MaxHeight="800">
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="ShowInTaskbar" Value="False" />
+            <Setter Property="ResizeMode" Value="NoResize" />
+            <Setter Property="SizeToContent" Value="WidthAndHeight" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+    </prism:Dialog.WindowStyle>
+    <Grid MinWidth="1200" MinHeight="520" MaxHeight="1000">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="520" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="700" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!-- Owner details -->
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="30,10,20,30">
+            <Border BorderThickness="0,0,0,2" BorderBrush="CornflowerBlue">
+                <TextBlock Text="Owner Information" FontSize="22" FontWeight="SemiBold" Foreground="DarkBlue" />
+            </Border>
+
+            <Grid Margin="5,15,5,0">
+                <Grid.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Margin" Value="0,10,0,0" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition MaxWidth="400" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Name" />
+                <TextBox Grid.Row="0" Grid.Column="1" Margin="0,5,0,0" Text="{Binding Owner.Name}" />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="SIN" />
+                <xctk:MaskedTextBox Grid.Row="1" Grid.Column="1" Margin="0,5,0,0" Style="{StaticResource {x:Type TextBox}}"
+                                    Text="{Binding Owner.SIN}" Mask="000-000-000" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Date of Birth" Margin="0,10,0,0" />
+                <DatePicker Grid.Row="2" Grid.Column="1" Margin="0,5,0,0"
+                            SelectedDate="{Binding Owner.DOB, StringFormat=MM-dd-yyyy}" VerticalAlignment="Top">
+                </DatePicker>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Address" Margin="0,10,0,0" />
+                <TextBox Grid.Row="3" Grid.Column="1" Margin="0,5,0,0" Text="{Binding Owner.Address}" 
+                         TextWrapping="Wrap" AcceptsReturn="True" />
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Address 2" Margin="0,10,0,0" />
+                <TextBox Grid.Row="4" Grid.Column="1" Margin="0,5,0,0" Text="{Binding Owner.Address2}"
+                         TextWrapping="Wrap" AcceptsReturn="True" />
+
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Phone Number" Margin="0,10,0,0" />
+                <xctk:MaskedTextBox Grid.Row="5" Grid.Column="1" Margin="0,5,0,0" Style="{StaticResource {x:Type TextBox}}"
+                                    Text="{Binding Owner.PhoneNumber}" Mask="(000) 000-0000" />
+
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Phone Number 2" Margin="0,10,0,0" />
+                <xctk:MaskedTextBox Grid.Row="6" Grid.Column="1" Margin="0,5,0,0" Style="{StaticResource {x:Type TextBox}}"
+                                    Text="{Binding Owner.PhoneNumber2}" Mask="(000) 000-0000" />
+
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="Email" Margin="0,10,0,0" />
+                <TextBox Grid.Row="7" Grid.Column="1" Margin="0,5,0,0" Text="{Binding Owner.Email}" />
+
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="Notes" Margin="0,10,0,0" />
+                <TextBox Grid.Row="8" Grid.Column="1" Margin="0,5,0,0" Text="{Binding Owner.Notes}"
+                         TextWrapping="Wrap" AcceptsReturn="True" Grid.ColumnSpan="2" />
+            </Grid>
+           
+            <Grid Margin="5,20,5,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition MaxWidth="400" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0,25,0,0" >
+                    <Button Width="110" Margin="0" Background="DodgerBlue" Foreground="White"
+                            Command="{Binding SaveOwnerCommand}"
+                            CommandParameter="{Binding Owner}">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Save" Margin="0,0,10,0" />
+                            <Label Foreground="White" Content="Save" FontWeight="SemiBold" />
+                        </StackPanel>
+                    </Button>
+                    <Button Width="110" Margin="10,0,0,0" Content="Cancel"
+                            Command="{Binding CloseDialogCommand}"/>
+                </StackPanel>
+            </Grid>
+
+        </StackPanel>
+
+        <!-- Separator -->
+        <Rectangle Grid.Row="0" Grid.Column="1" VerticalAlignment="Stretch" Width="2" 
+                   Stroke="LightGray" StrokeThickness="1" Margin="0,0,0,0" />
+
+        <!-- Business ownership -->
+        <StackPanel Grid.Row="0" Grid.Column="2" Margin="20,10,20,30">
+            <ScrollViewer MaxHeight="600" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Border BorderThickness="0,0,0,2" BorderBrush="CornflowerBlue">
+                    <TextBlock Text="Business Owned" FontSize="22" FontWeight="SemiBold" Foreground="DarkBlue" />
+                </Border>
+
+                <ListView ItemsSource="{Binding Owner.BusinessOwners}" Margin="0,10,0,0"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Focusable" Value="False" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ContentControl>
+                                <Border BorderThickness="1" BorderBrush="#7777ACF1" Margin="2"
+                                    Background="Cornsilk" >
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="LightGray" ShadowDepth="1" BlurRadius="5">
+                                        </DropShadowEffect>
+                                    </Border.Effect>
+                                    <Grid Width="630" Margin="5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{Binding Business.OperatingName}" FontSize="17" TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding Business.LegalName}" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <Button Grid.Column="1" Width="100"
+                                                Command="{Binding Path=DataContext.RemoveBusinessOwnerCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                                CommandParameter="{Binding Id}"
+                                                Margin="10,0,0,0">
+                                            <Button.Content>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Label Content="&#xECC9;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="Red" Margin="0,0,5,0" />
+                                                    <Label Content="Remove"/>
+                                                </StackPanel>
+                                            </Button.Content>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </ContentControl>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <Grid Margin="10,15,15,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Column="0" Text="{Binding BusinessFilterText, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <ComboBox Grid.Column="1" Width="400" Margin="7,2" IsReadOnly="False" AlternationCount="2" 
+                              IsEditable="True" IsTextSearchEnabled="True" TextSearch.TextPath="OperatingName"
+                              ItemsSource="{Binding BusinessFilterableView}"
+                              SelectedItem="{Binding SelectedBusiness, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBox.ItemContainerStyle>
+                            <Style TargetType="ComboBoxItem">
+                                <Style.Triggers>
+                                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                        <Setter Property="Background" Value="White" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ComboBox.ItemContainerStyle>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel MaxWidth="355">
+                                    <TextBlock Text="{Binding OperatingName}" FontSize="18" TextWrapping="Wrap" />
+                                    <TextBlock Text="{Binding LegalName}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Button Grid.Column="2" Width="100"
+                        Command="{Binding Path=DataContext.AddBusinessOwnerCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                        CommandParameter="{Binding SelectedBusiness.Id}" >
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="&#xECC8;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="Green" Margin="0,0,5,0"/>
+                                <Label Content="   Add   "/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+
+                <TextBlock Margin="5,15,0,0" Foreground="Red" TextWrapping="Wrap"
+                       Text="{Binding AddOrRemoveBusinessOwnerErrorText}" 
+                       Visibility="{Binding AddOrRemoveBusinessOwnerErrorText, Converter={StaticResource nullToVisibilityConverter}}" />
+
+                <Border BorderThickness="0,0,0,2" BorderBrush="CornflowerBlue">
+                </Border>
+            </StackPanel>
+            </ScrollViewer>
+
+            <!-- Personal Tax: T1 -->
+            <Expander Width="640" Margin="0,10,0,0" Background="#E4EFE7" BorderBrush="#C4CFC7" BorderThickness="1,1,2,4">
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Personal Tax - T1" Width="150" FontWeight="SemiBold" FontSize="17" Margin="0,5" />
+                        <TextBlock Text="{Binding T1Account.TaxNumber}" />
+                    </StackPanel>
+                </Expander.Header>
+                <StackPanel>
+                    <Rectangle HorizontalAlignment="Stretch" Height="1" Stroke="#C4CFC7" Margin="5,0" />
+                    <Button Content="New T1 Account" Margin="10" 
+                                Visibility="{Binding T1Account, Converter={StaticResource nullToVisibilityReverseConverter}, ConverterParameter=True}"
+                                Command="{Binding AddNewT1AccountCommand}" 
+                                CommandParameter="{Binding Owner}">
+                    </Button>
+                    <Grid Margin="10,5,10,10" Visibility="{Binding T1Account, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130" />
+                            <ColumnDefinition Width="*" MinWidth="150" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Run T1" />
+                        <CheckBox Grid.Row="0" Grid.Column="1"
+                                  IsChecked="{Binding T1Account.IsActive}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="High Priority" />
+                        <CheckBox Grid.Row="1" Grid.Column="1"
+                                  IsChecked="{Binding T1Account.IsHighPriority}"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Tax Year" />
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding T1Account.TaxYear}" />
+                        
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Spouse" />
+                        <TextBox Grid.Row="3" Grid.Column="1" Margin="0,5,0,0"
+                                 Text="{Binding T1Account.Description}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="T1 Notes" />
+                        <TextBox Grid.Row="4" Grid.Column="1" Margin="0,5,0,0"
+                                 Text="{Binding T1Account.Notes}" />
+                    </Grid>
+                </StackPanel>
+            </Expander>
+
+        </StackPanel>
+    </Grid>
+</UserControl>
