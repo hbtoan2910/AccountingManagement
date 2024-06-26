@@ -17,6 +17,9 @@ namespace AccountingManagement.Services
         void ConfirmInstalment(TaxAccountWithInstalment taxAccount, string confirmText, DateTime confirmDate, Guid userAccountId);
 
         void GenerateMissingHSTAccounts();
+
+        //RYAN add
+        DateTime CalculateNextInstalmentDueDateNew(DateTime currentEndingPeriod);
     }
 
     public class FilingHandler : IFilingHandler
@@ -207,7 +210,13 @@ namespace AccountingManagement.Services
 
             return new DateTime(nextMonth.Year, nextMonth.Month, DateTime.DaysInMonth(nextMonth.Year, nextMonth.Month));
         }
+        //RYAN: Add new method for quarterly instalment (4months)
+        public DateTime CalculateNextInstalmentDueDateNew(DateTime currentEndingPeriod)
+        {
+            var nextMonth = currentEndingPeriod.AddMonths(4);
 
+            return new DateTime(nextMonth.Year, nextMonth.Month, DateTime.DaysInMonth(nextMonth.Year, nextMonth.Month));
+        }
         private (DateTime, DateTime) CalculateNextHSTDueDates(DateTime endingPeriod, FilingCycle cycle, bool isCorp)
         {
             DateTime nextEndingPeriod;

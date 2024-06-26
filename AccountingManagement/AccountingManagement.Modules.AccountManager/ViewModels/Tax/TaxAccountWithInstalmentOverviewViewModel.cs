@@ -15,6 +15,7 @@ using AccountingManagement.Modules.AccountManager.Models;
 using AccountingManagement.Modules.AccountManager.Utilities;
 using AccountingManagement.Services;
 using AccountingManagement.Services.Email;
+using System.Windows;
 
 namespace AccountingManagement.Modules.AccountManager.ViewModels
 {
@@ -226,30 +227,53 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
         {
             var currentUserId = _globalService.CurrentSession.UserAccountId;
             var confirmDate = DateTime.Now;
+            var businessId = model.Business.Id;
+            var taxAccountId = model.TaxAccount.Id;
 
             try
             {
+                
                 //RYAN: popup to check if instalment is needed
-                var parameters = new DialogParameters($"");
-
-                _dialogService.ShowDialog(nameof(Views.BusinessDetails), parameters, p =>
+                var needed = _dialogService.ShowConfirmation("Instalment", "Is Instalment needed ?");
+                if (needed)
                 {
+                    if (taxAccountId == null)
+                    {
+                        return;
+                    }
 
-                });
+                    var parameters = new DialogParameters();
+                    parameters.Add("TaxAccountId", taxAccountId.ToString());
+                    parameters.Add("BusinessId", businessId.ToString());
 
-                _filingHandler.ConfirmTaxFiling(model.TaxAccount, model.ConfirmText, confirmDate, currentUserId);
+                    _dialogService.ShowDialog(nameof(Views.TaxAccountWithInstalmentBrief), parameters, dialog =>
+                    {
+                        if (dialog.Result == ButtonResult.OK)
+                        {
+                            //save to db with updated data: [user-input Instalment amount & auto-generated Instalment due date with a logic]
+                                                        
+                            //RYAN: do the filing, after this, EndingPeriod and DueDate will be updated                            
+                            _filingHandler.ConfirmTaxFiling(model.TaxAccount, model.ConfirmText, confirmDate, currentUserId); 
 
-                model.ConfirmText = string.Empty;
+                            model.ConfirmText = string.Empty;
 
-                var oldRecord = TaxAccountModels.FirstOrDefault(x => x.TaxAccount.Id == model.TaxAccount.Id);
-                var updated = _taxAccountService.GetTaxAccountWithInstalmentById(model.TaxAccount.Id);
+                            var oldRecord = TaxAccountModels.FirstOrDefault(x => x.TaxAccount.Id == model.TaxAccount.Id);
+                            var updated = _taxAccountService.GetTaxAccountWithInstalmentById(model.TaxAccount.Id);
 
-                if (oldRecord != null && updated != null)
-                {
-                    oldRecord.TaxAccount = updated;
+                            if (oldRecord != null && updated != null)
+                            {
+                                oldRecord.TaxAccount = updated;
 
-                    BusinessTaxAccountsView.Refresh();
-                }
+                                BusinessTaxAccountsView.Refresh();
+                            }
+                        }
+                        else
+                        {
+                            //do nothing
+                        }
+                            
+                    });
+                }                              
             }
             catch (Exception ex)
             {

@@ -24,6 +24,7 @@ namespace AccountingManagement.Core
         public const string TaskOverview = "TaskOverview";
         public const string TaxAccountOverview = "TaxAccountOverview";
         public const string TaxAccountWithInstalmentOverview = "TaxAccountWithInstalmentOverview";
+        public const string TaxAccountWithInstalmentBrief = "TaxAccountWithInstalmentBrief";//RYAN
         public const string TaxAccountHistory = "TaxAccountHistory";
         public const string TaxInstalmentOverview = "TaxInstalmentOverview";
         public const string UserAccountOverview = "UserAccountOverview";
