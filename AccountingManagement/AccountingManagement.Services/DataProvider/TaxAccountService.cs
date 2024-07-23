@@ -22,10 +22,11 @@ namespace AccountingManagement.Services
 
         List<TaxFilingLog> GetTaxFilingLogs(DateTime cutoffDate);
 
-        // Personal Tax // T1
+        // Personal Tax - T1
         List<PersonalTaxAccount> GetPersonalTaxAccounts();
         List<PersonalTaxAccount> GetPersonalTaxAccountsByType(PersonalTaxType taxType);
         PersonalTaxAccount GetPersonalTaxAccountById(Guid id);
+        PersonalTaxAccount GetPersonalTaxAccountByOwnerId(Guid id); //RYAN: add new method
         bool UpsertPersonalTaxAccount(PersonalTaxAccount pta);
 
         List<PersonalTaxAccountLog> GetPersonalTaxAccountLogsByType(PersonalTaxType taxType);
@@ -209,6 +210,14 @@ namespace AccountingManagement.Services
                 .FirstOrDefault();
         }
 
+        public PersonalTaxAccount GetPersonalTaxAccountByOwnerId(Guid ownerId) 
+        {
+            using var dbContext = new AccountingManagementDbContext();
+
+            return dbContext.PersonalTaxAccounts.Where(a => a.OwnerId == ownerId)                
+                .FirstOrDefault();
+        }
+
         public bool UpsertPersonalTaxAccount(PersonalTaxAccount pta)
         {
             using var dbContext = new AccountingManagementDbContext();
@@ -227,7 +236,11 @@ namespace AccountingManagement.Services
                 existing.Step3Completed = pta.Step3Completed;
                 existing.Step4Completed = pta.Step4Completed;
                 existing.IsHighPriority = pta.IsHighPriority;
+                existing.IsInProgress = pta.IsInProgress;
                 existing.IsActive = pta.IsActive;
+                existing.InstalmentRequired = pta.InstalmentRequired;
+                existing.InstalmentAmount = pta.InstalmentAmount;
+                existing.InstalmentDueDate = pta.InstalmentDueDate;
 
                 dbContext.SaveChanges();
             }

@@ -46,10 +46,11 @@ namespace AccountingManagement.DataAccess.Entities
     }
 
     public enum PayrollStatus : byte
-    {
+    {        
         None = 0,
         InProgress = 1,
         Done = 2,
+        All = 3,//Ryan: to display all
     }
 
     public enum EmailReminder : byte

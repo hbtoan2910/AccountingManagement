@@ -59,7 +59,7 @@
 
                 <ui:SimpleStackPanel Grid.Row="0" Grid.Column="1" Spacing="3">
                     <TextBlock Text="Due Date 1" />
-                    <DatePicker Width="200" SelectedDate="{Binding PayrollRecord.Payroll1DueDate, StringFormat=dd/MM/yyyy}" />
+                    <DatePicker Width="200" SelectedDate="{Binding Payroll1DueDate, StringFormat=dd/MM/yyyy}" />
                     <ComboBox Width="200" IsEditable="False" IsReadOnly="True"
                         ItemsSource="{Binding PayrollStatuses}" 
                         SelectedItem="{Binding PayrollRecord.Payroll1Status}"
@@ -71,7 +71,7 @@
 
                 <ui:SimpleStackPanel Grid.Row="0" Grid.Column="2" Spacing="3">
                     <TextBlock Text="Due Date 2" />
-                    <DatePicker Width="200" SelectedDate="{Binding PayrollRecord.Payroll2DueDate, StringFormat=MM-dd-yyyy}" />
+                    <DatePicker Width="200" SelectedDate="{Binding Payroll2DueDate, StringFormat=MM-dd-yyyy}" />
                     <ComboBox Width="200" IsEditable="False" IsReadOnly="True"
                         ItemsSource="{Binding PayrollStatuses}" 
                         SelectedItem="{Binding PayrollRecord.Payroll2Status}"
@@ -83,7 +83,7 @@
 
                 <ui:SimpleStackPanel Grid.Row="0" Grid.Column="3" Spacing="3">
                     <TextBlock Text="Due Date 3" />
-                    <DatePicker Width="200" SelectedDate="{Binding PayrollRecord.Payroll3DueDate, StringFormat=MM-dd-yyyy}" />
+                    <DatePicker Width="200" SelectedDate="{Binding Payroll3DueDate, StringFormat=MM-dd-yyyy}" />
                     <ComboBox Width="200" IsEditable="False" IsReadOnly="True"
                         ItemsSource="{Binding PayrollStatuses}" 
                         SelectedItem="{Binding PayrollRecord.Payroll3Status}"

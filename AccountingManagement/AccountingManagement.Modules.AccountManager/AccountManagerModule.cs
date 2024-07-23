@@ -68,6 +68,7 @@ namespace AccountingManagement.Modules.AccountManager
             containerRegistry.RegisterForNavigation<PayrollPayoutOverview>(ViewRegKeys.PayrollPayoutOverview);
             containerRegistry.RegisterForNavigation<PersonalTaxAccountOverview>(ViewRegKeys.PersonalTaxAccountOverview);
             containerRegistry.RegisterForNavigation<PersonalTaxAccountHistory>(ViewRegKeys.PersonalTaxAccountHistory);
+            containerRegistry.RegisterForNavigation<PersonalTaxAccountWithInstalmentBrief>(ViewRegKeys.PersonalTaxAccountWithInstalmentBrief);//RYAN
             containerRegistry.RegisterForNavigation<TaxAccountOverview>(ViewRegKeys.TaxAccountOverview);
             containerRegistry.RegisterForNavigation<TaxAccountWithInstalmentOverview>(ViewRegKeys.TaxAccountWithInstalmentOverview);
             containerRegistry.RegisterForNavigation<TaxAccountWithInstalmentBrief>(ViewRegKeys.TaxAccountWithInstalmentBrief);//RYAN
@@ -91,7 +92,7 @@ namespace AccountingManagement.Modules.AccountManager
             containerRegistry.RegisterDialog<UserAccountDetails, UserAccountDetailsViewModel>();
 
             containerRegistry.RegisterDialog<SimpleInputDialog, SimpleInputDialogViewModel>();
-            containerRegistry.RegisterDialog<SimpleErrorDialog, SimpleErrorDialogViewModel>();
+            containerRegistry.RegisterDialog<SimpleErrorDialog, SimpleErrorDialogViewModel>();           
         }
 
         private void SubscribeToEvents()

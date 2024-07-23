@@ -18,6 +18,7 @@ namespace AccountingManagement.Core
         public const string PayrollPayoutOverview = "PayrollPayoutOverview";
         public const string PersonalTaxAccountOverview = "PersonalTaxAccountOverview";
         public const string PersonalTaxAccountHistory = "PersonalTaxAccountHistory";
+        public const string PersonalTaxAccountWithInstalmentBrief = "PersonalTaxAccountWithInstalmentBrief";//RYAN
         public const string HSTFiling = "HSTFiling";
         public const string StatusBar = "StatusBar";
         public const string TaskHistory = "TaskHistory";

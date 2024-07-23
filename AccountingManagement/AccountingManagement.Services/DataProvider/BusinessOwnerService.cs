@@ -14,6 +14,7 @@ namespace AccountingManagement.Services
         List<Business> GetBusinessListOnly();
         Business GetBusinessById(Guid businessId);
         Business GetBusinessByIdWithFullDetails(Guid businessId);
+        List<Business> GetBusinessByOwnerId(Guid ownerId);//RYAN:add 1 more method
         List<Owner> GetOwners();
         List<Owner> GetOwnersByBusinessId(Guid businessId);
         Owner GetOwnerById(Guid ownerId);
@@ -101,7 +102,14 @@ namespace AccountingManagement.Services
                 .FirstOrDefault();
         }
 
+        public List<Business> GetBusinessByOwnerId(Guid ownerId)
+        {
+            using var dbContext = new AccountingManagementDbContext();
 
+            return dbContext.BusinessOwners.Where(bo => bo.OwnerId == ownerId)
+                .Select(bo => bo.Business)
+                .ToList();
+        }
         public List<Owner> GetOwners()
         {
             using var dbContext = new AccountingManagementDbContext();
@@ -259,15 +267,17 @@ namespace AccountingManagement.Services
             {
                 dbContext.Database.BeginTransaction();
 
+                //RYAN: actually, we just wanna disable owner, not really remove it from db & also dont want to remove its current owned businesses
+                /*
                 var existingRelationship = dbContext.BusinessOwners.Where(x => x.OwnerId == ownerId);
                 if (existingRelationship.Count() > 0)
                 {
                     dbContext.BusinessOwners.RemoveRange(existingRelationship);
-                }
+                }*/
 
                 // dbContext.Owners.Remove(existingOwner);
 
-                // Deactive T1 Account together with the Owner
+                //RYAN: Deactivate T1 Account together with the Owner, is it really needed ???
                 var personalTaxAccounts = dbContext.PersonalTaxAccounts.Where(x => x.OwnerId == ownerId);
                 if (personalTaxAccounts != null && personalTaxAccounts.Count() > 0)
                 {
@@ -351,7 +361,7 @@ namespace AccountingManagement.Services
                 existingBusiness.LegalName = business.LegalName;
                 existingBusiness.BusinessNumber = business.BusinessNumber;
                 existingBusiness.BusinessDate = business.BusinessDate;
-                existingBusiness.IsCorporation = business.IsCorporation;
+                existingBusiness.IsSoleProprietorship = business.IsSoleProprietorship;
                 existingBusiness.Address = business.Address;
                 existingBusiness.MailingAddress = business.MailingAddress;
                 existingBusiness.Email = business.Email;
@@ -369,7 +379,7 @@ namespace AccountingManagement.Services
                     LegalName = business.LegalName,
                     BusinessNumber = business.BusinessNumber,
                     BusinessDate = business.BusinessDate,
-                    IsCorporation = business.IsCorporation,
+                    IsSoleProprietorship = business.IsSoleProprietorship,
                     Address = business.Address,
                     MailingAddress = business.MailingAddress,
                     Email = business.Email,

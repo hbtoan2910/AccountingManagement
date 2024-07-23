@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Windows;
 using System.Windows.Data;
 
 namespace AccountingManagement.Modules.AccountManager.ViewModels
@@ -17,32 +18,11 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
     public class TaxAccountWithInstalmentBriefViewModel : ViewModelBase, IDialogAware
     {
         #region Bindings & Commands
-        private TaxAccountWithInstalment _taxAccount;
-        public TaxAccountWithInstalment TaxAccount
+        private TaxAccountWithInstalment _taxAccountWithInstalment;
+        public TaxAccountWithInstalment TaxAccountWithInstalment
         {
-            get { return _taxAccount; }
-            set { SetProperty(ref _taxAccount, value); }
-        }
-
-        //private TaxAccountWithInstalment _hstAccount;
-        //public TaxAccountWithInstalment HSTAccount
-        //{
-        //    get { return _hstAccount; }
-        //    set { SetProperty(ref _hstAccount, value); }
-        //}
-
-        //private TaxAccountWithInstalment _corporationTaxAccount;
-        //public TaxAccountWithInstalment CorporationTaxAccount
-        //{
-        //    get { return _corporationTaxAccount; }
-        //    set { SetProperty(ref _corporationTaxAccount, value); }
-        //}
-
-        private bool _instalmentRequired;
-        public bool InstalmentRequired
-        {
-            get { return _instalmentRequired; }
-            set { SetProperty(ref _instalmentRequired, value); }
+            get { return _taxAccountWithInstalment; }
+            set { SetProperty(ref _taxAccountWithInstalment, value); }
         }
 
         private Business _business;
@@ -58,11 +38,18 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
             set { SetProperty(ref _errorMessage, value); }
         }
 
+        //RYAN: for display purpose on dialogue ONLY
+        private bool _instalmentRequired;
+        public bool InstalmentRequired
+        {
+            get { return _instalmentRequired; }
+            set { SetProperty(ref _instalmentRequired, value); }
+        }
+
+        private bool _isNew = false;               
         public DelegateCommand SaveTaxAccountCommand { get; private set; }
         public DelegateCommand CloseDialogCommand { get; private set; }
         #endregion
-
-        private bool _isNew = false;
 
         #region Services
         private readonly ITaxAccountService _taxAccountService;
@@ -86,24 +73,25 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
+            //RYAN: this dialog is triggered from Federal > Confirm Filing
             if (parameters.ContainsKey("TaxAccountId") && Guid.TryParse(parameters.GetValue<string>("TaxAccountId"), out Guid taxAccountId))
             {
                 _isNew = false;
 
-                TaxAccount = _taxAccountService.GetTaxAccountWithInstalmentById(taxAccountId);
+                TaxAccountWithInstalment = _taxAccountService.GetTaxAccountWithInstalmentById(taxAccountId);
 
-                if (TaxAccount != null && TaxAccount.AccountType == TaxAccountType.HST)
+                if (TaxAccountWithInstalment != null && TaxAccountWithInstalment.AccountType == TaxAccountType.HST)
                 {
-                    TaxAccount.InstalmentRequired = true; //RYAN: always set to true, because if "needed=true" in the previous step b4 popup this dialog
-                    InstalmentRequired = TaxAccount.InstalmentRequired;
+                    TaxAccountWithInstalment.InstalmentRequired = true; //RYAN: always set to true, because if "needed=true" in the previous step b4 popup this dialog
+                    InstalmentRequired = TaxAccountWithInstalment.InstalmentRequired;
                 }
-                if (TaxAccount != null && TaxAccount.AccountType == TaxAccountType.Corporation)
+                if (TaxAccountWithInstalment != null && TaxAccountWithInstalment.AccountType == TaxAccountType.Corporation)
                 {
-                    TaxAccount.InstalmentRequired = true; //RYAN: always set to true, because if "needed=true" in the previous step b4 popup this dialog
-                    InstalmentRequired = TaxAccount.InstalmentRequired;
+                    TaxAccountWithInstalment.InstalmentRequired = true; //RYAN: always set to true, because if "needed=true" in the previous step b4 popup this dialog
+                    InstalmentRequired = TaxAccountWithInstalment.InstalmentRequired;
                 }
                 
-                Business = TaxAccount.Business;
+                Business = TaxAccountWithInstalment.Business;
             }
             else if (parameters.ContainsKey("BusinessId") &&  Guid.TryParse(parameters.GetValue<string>("BusinessId"), out Guid businessId))
             {
@@ -135,18 +123,26 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
         {
             try
             {
-                DateTime newInstalmentDueDate = _filingHandler.CalculateNextInstalmentDueDateNew(TaxAccount.EndingPeriod);
-                TaxAccount.InstalmentDueDate = newInstalmentDueDate;
+                DateTime newInstalmentDueDate = _filingHandler.CalculateNextInstalmentDueDateNew(TaxAccountWithInstalment.EndingPeriod);
+                TaxAccountWithInstalment.InstalmentDueDate = newInstalmentDueDate;
 
-                _taxAccountService.UpsertTaxAccountWithInstalment(TaxAccount);
+                if (TaxAccountWithInstalment.InstalmentAmount != 0)
+                {
+                    _taxAccountService.UpsertTaxAccountWithInstalment(TaxAccountWithInstalment);
 
-                RaiseRequestClose(new DialogResult(ButtonResult.OK));
+                    RaiseRequestClose(new DialogResult(ButtonResult.OK));
+
+                } else
+                {
+                    MessageBox.Show("Instalment Amount cannot be empty", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
             }
             catch (Exception ex)
             {
                 ErrorMessage = $"Unexpected error while saving Tax Account. {ex.Message}";
-                Log.Error($"Error saving {TaxAccount.AccountType} Tax Account."
-                    + $" AccountId:{TaxAccount.Id}, BusinessId:{Business.Id}, IsNew:{_isNew}. {ex}");
+                Log.Error($"Error saving {TaxAccountWithInstalment.AccountType} Tax Account."
+                    + $" AccountId:{TaxAccountWithInstalment.Id}, BusinessId:{Business.Id}, IsNew:{_isNew}. {ex}");
             }
         }
 

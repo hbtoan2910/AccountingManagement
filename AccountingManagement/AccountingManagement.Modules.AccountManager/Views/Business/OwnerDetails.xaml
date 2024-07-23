@@ -250,39 +250,78 @@
                     <Grid Margin="10,5,10,10" Visibility="{Binding T1Account, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="130" />
-                            <ColumnDefinition Width="*" MinWidth="150" />
+                            <ColumnDefinition Width="*" MinWidth="100" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="100" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition />
                             <RowDefinition />
                             <RowDefinition />
                             <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
+
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Run T1" />
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Run T1" VerticalAlignment="Center"/>
                         <CheckBox Grid.Row="0" Grid.Column="1"
                                   IsChecked="{Binding T1Account.IsActive}" />
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="High Priority" />
-                        <CheckBox Grid.Row="1" Grid.Column="1"
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="High Priority" VerticalAlignment="Center"/>
+                        <CheckBox Grid.Row="0" Grid.Column="3"
                                   IsChecked="{Binding T1Account.IsHighPriority}"/>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Tax Year" />
-                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding T1Account.TaxYear}" />
+                        <TextBlock Grid.Row="0" Grid.Column="4" Text="In progress" VerticalAlignment="Center"/>
+                        <CheckBox Grid.Row="0" Grid.Column="5"
+                                  IsChecked="{Binding T1Account.IsInProgress}"/>
                         
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Spouse" />
-                        <TextBox Grid.Row="3" Grid.Column="1" Margin="0,5,0,0"
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Tax Year" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Margin="0,5,0,0" Text="{Binding T1Account.TaxYear}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Spouse" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Margin="0,5,0,0" Grid.ColumnSpan="4"
                                  Text="{Binding T1Account.Description}" />
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="T1 Notes" />
-                        <TextBox Grid.Row="4" Grid.Column="1" Margin="0,5,0,0"
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="T1 Notes" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Margin="0,5,0,0" Grid.ColumnSpan="4"
                                  Text="{Binding T1Account.Notes}" />
                     </Grid>
                 </StackPanel>
             </Expander>
+            
+            <!-- Personal Tax: T1 (Instalment area) -->
+            <Expander Width="640" Margin="0,10,0,0" Background="#E4EFE7" BorderBrush="#C4CFC7" BorderThickness="1,1,2,4">
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Personal Tax - T1 (Instalment)" Width="250" FontWeight="SemiBold" FontSize="17" Margin="0,5" />
+                        <TextBlock Text="{Binding T1Account.TaxNumber}" />
+                    </StackPanel>
+                </Expander.Header>
+                <StackPanel>
+                    <Rectangle HorizontalAlignment="Stretch" Height="1" Stroke="#C4CFC7" Margin="5,0" />
+                    <Grid Margin="10,5,10,10" Visibility="{Binding T1Account, Converter={StaticResource nullToVisibilityConverter}, ConverterParameter=True}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130" />
+                            <ColumnDefinition Width="*" MinWidth="150" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
 
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Require Instalment" VerticalAlignment="Center"/>
+                        <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding T1Account.InstalmentRequired}"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Instalment Amount" VerticalAlignment="Center"/>
+                        <TextBox IsEnabled="{Binding T1Account.InstalmentRequired}" Grid.Row="1" Grid.Column="1" Margin="0,5,0,0" Text="{Binding T1Account.InstalmentAmount}" HorizontalAlignment="Left" Width="150"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Instalment Due Date" VerticalAlignment="Center"/>
+                        <DatePicker IsEnabled="{Binding T1Account.InstalmentRequired}" Grid.Row="2" Grid.Column="1" Margin="0,5,0,0" SelectedDate="{Binding T1Account.InstalmentDueDate, StringFormat=MM-dd-yyyy}" VerticalAlignment="Top"/>
+                    </Grid>
+                </StackPanel>
+            </Expander>
         </StackPanel>
     </Grid>
 </UserControl>

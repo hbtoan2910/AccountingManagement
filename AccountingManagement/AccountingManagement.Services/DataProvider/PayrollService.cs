@@ -41,6 +41,26 @@ namespace AccountingManagement.Services
                 .Where(b => b.PayrollAccount.IsActive && b.PayrollAccount.PayrollCycle != FilingCycle.None)
                 .AsNoTracking()
                 .ToList();
+            
+            /*  RYAN: equivalent with this query:
+                DECLARE @FilingCycleNoneValue INT;
+                DECLARE @PayrollPeriod NVARCHAR(50);
+
+                SET @FilingCycleNoneValue = 0;
+                SET @PayrollPeriod = '2024-09';
+
+                SELECT DISTINCT b.*
+                FROM Business b
+                INNER JOIN PayrollAccount pa ON b.Id = pa.BusinessId
+                INNER JOIN PayrollAccountRecord par ON pa.Id = par.PayrollAccountId
+                LEFT JOIN BusinessOwner bo ON b.Id = bo.BusinessId
+                LEFT JOIN Owner o ON bo.OwnerId = o.Id
+                WHERE b.IsDeleted = 0
+                  AND pa.IsActive = 1
+                  AND pa.PayrollCycle != @FilingCycleNoneValue
+                  AND par.PayrollPeriod = @PayrollPeriod
+                ORDER BY b.Id;
+            */
         }
 
         public PayrollAccountRecord GetPayrollRecordById(long id)
@@ -77,6 +97,7 @@ namespace AccountingManagement.Services
                 existingAccount.IsRunT4 = payrollAccount.IsRunT4;
                 existingAccount.IsRunT4A = payrollAccount.IsRunT4A;
                 existingAccount.IsRunT5 = payrollAccount.IsRunT5;
+                existingAccount.Timesheet = payrollAccount.Timesheet;
                 existingAccount.YearEndNotes = payrollAccount.YearEndNotes;
             }
 

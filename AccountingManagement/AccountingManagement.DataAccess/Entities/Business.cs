@@ -12,7 +12,7 @@ namespace AccountingManagement.DataAccess.Entities
 
         public string OperatingName { get; set; }
 
-        public bool IsCorporation { get; set; }
+        public bool IsSoleProprietorship { get; set; }
 
         public string BusinessNumber { get; set; }
 

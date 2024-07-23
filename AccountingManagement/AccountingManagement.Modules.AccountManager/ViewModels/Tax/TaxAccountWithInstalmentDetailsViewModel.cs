@@ -7,6 +7,7 @@ using AccountingManagement.DataAccess.Entities;
 using AccountingManagement.Services;
 using Serilog;
 using System.Linq;
+using System.Windows;
 
 namespace AccountingManagement.Modules.AccountManager.ViewModels
 {
@@ -84,9 +85,17 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
         {
             try
             {
-                _taxAccountService.UpsertTaxAccountWithInstalment(TaxAccount);
+                if (TaxAccount.InstalmentAmount != 0)
+                {
+                    _taxAccountService.UpsertTaxAccountWithInstalment(TaxAccount);
 
-                RaiseRequestClose(new DialogResult(ButtonResult.OK));
+                    RaiseRequestClose(new DialogResult(ButtonResult.OK));
+
+                }
+                else
+                {
+                    MessageBox.Show("Instalment Amount cannot be empty", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
             }
             catch (Exception ex)
             {

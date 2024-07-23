@@ -20,6 +20,7 @@ namespace AccountingManagement.Services
 
         //RYAN add
         DateTime CalculateNextInstalmentDueDateNew(DateTime currentEndingPeriod);
+        DateTime CalculateNextPersonalInstalmentDueDate();
     }
 
     public class FilingHandler : IFilingHandler
@@ -59,7 +60,7 @@ namespace AccountingManagement.Services
                 });
 
                 (DateTime nextEndingPeriod, DateTime nextDueDate) =
-                    CalculateNextTaxDueDates(taxAccount.AccountType, taxAccount.EndingPeriod, taxAccount.Cycle, taxAccount.Business.IsCorporation);
+                    CalculateNextTaxDueDates(taxAccount.AccountType, taxAccount.EndingPeriod, taxAccount.Cycle, taxAccount.Business.IsSoleProprietorship);
 
                 existingAccount.EndingPeriod = nextEndingPeriod;
                 existingAccount.DueDate = nextDueDate;
@@ -104,7 +105,7 @@ namespace AccountingManagement.Services
                 });
 
                 (DateTime nextEndingPeriod, DateTime nextDueDate) =
-                    CalculateNextTaxDueDates(taxAccount.AccountType, taxAccount.EndingPeriod, taxAccount.Cycle, taxAccount.Business.IsCorporation);
+                    CalculateNextTaxDueDates(taxAccount.AccountType, taxAccount.EndingPeriod, taxAccount.Cycle, taxAccount.Business.IsSoleProprietorship);
 
                 existingAccount.UserAccountId = null;
                 existingAccount.UserAccount = null;
@@ -210,12 +211,27 @@ namespace AccountingManagement.Services
 
             return new DateTime(nextMonth.Year, nextMonth.Month, DateTime.DaysInMonth(nextMonth.Year, nextMonth.Month));
         }
-        //RYAN: Add new method for quarterly instalment (4months)
+        //RYAN: Add new method for quarterly instalment of TaxAccount (4months)
         public DateTime CalculateNextInstalmentDueDateNew(DateTime currentEndingPeriod)
         {
             var nextMonth = currentEndingPeriod.AddMonths(4);
 
             return new DateTime(nextMonth.Year, nextMonth.Month, DateTime.DaysInMonth(nextMonth.Year, nextMonth.Month));
+        }
+        //RYAN: Add new method for calculating instalmentDueDate of PersonalTaxAccount (logic: 15Mar of next year)
+        public DateTime CalculateNextPersonalInstalmentDueDate()
+        {
+            // Get the current year and add one year
+            int nextYear = DateTime.Now.Year + 1;
+
+            // Set the specific month (March) and day (15th)
+            int month = 3; // March
+            int day = 15;
+
+            // Create the new DateTime object
+            DateTime newDateTime = new DateTime(nextYear, month, day);
+
+            return newDateTime;
         }
         private (DateTime, DateTime) CalculateNextHSTDueDates(DateTime endingPeriod, FilingCycle cycle, bool isCorp)
         {

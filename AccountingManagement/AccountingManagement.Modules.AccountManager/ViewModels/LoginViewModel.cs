@@ -29,7 +29,8 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
             set { SetProperty(ref _errorMessage, value); }
         }
 
-        private string _usernameInput;
+        private string _usernameInput = "ryan.admin"; //RYAN: uncomment this to skip username input :')
+        //private string _usernameInput;
         public string UsernameInput
         {
             get { return _usernameInput; }

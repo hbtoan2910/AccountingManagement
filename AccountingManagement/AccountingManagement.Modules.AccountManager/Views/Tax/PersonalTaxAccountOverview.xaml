@@ -26,6 +26,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Side bar buttons -->
@@ -58,7 +59,6 @@
                         </StackPanel>
                     </Button.Content>
                 </Button>
-
             </StackPanel>
             <Rectangle Grid.Row="0" Grid.Column="1" Height="1" Stroke="LightGray" Margin="0,5,0,0"/>
         </StackPanel>
@@ -77,6 +77,7 @@
                     <TextBox Text="{Binding OwnerFilterText, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,10,3"
                              ui:ControlHelper.PlaceholderText="Search by Owner Name, SIN, Phone or Notes" />
                 </StackPanel>
+                <TextBlock Text="" Width="10" TextWrapping="Wrap"/>
                 <TextBlock Text="" Width="10" TextWrapping="Wrap"/>
                 <StackPanel>
                     <TextBlock Text="Tax Year" Width="90"/>
@@ -156,7 +157,7 @@
                     <ContentControl>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDoubleClick">
-                                <i:InvokeCommandAction Command="{Binding Path=DataContext.OpenPersonalTaxAccountDetailsDialogCommand, ElementName=ItemOverviewListView}" 
+                                <i:InvokeCommandAction Command="{Binding Path=DataContext.OpenOwnerDetailsDialogCommand, ElementName=ItemOverviewListView}" 
                                                        CommandParameter="{Binding PersonalTaxAccount}"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
@@ -170,7 +171,7 @@
                             
                             <!-- Name, Phone and SIN -->
                             <StackPanel Orientation="Horizontal">
-                                <StackPanel Width="310">
+                                <StackPanel Width="290">
                                     <ui:HyperlinkButton Content="{Binding Owner.Name}" FontSize="16" Padding="0"
                                                         Command="{Binding Path=DataContext.NavigateToOwnerOverviewCommand, ElementName=ItemOverviewListView}"
                                                         CommandParameter="{Binding Owner}" />
@@ -180,8 +181,11 @@
                             </StackPanel>
 
                             <TextBlock Visibility="{Binding PersonalTaxAccount.IsHighPriority, Converter={StaticResource boolToVisibilityConverter}}"
-                                        ToolTip="High Priority" Text="&#xE8C9;" FontFamily="Segoe MDL2 Assets" FontSize="26" Foreground="Red" Width="40" />
-                            
+                                        ToolTip="High Priority" Text="&#xE8C9;" FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="Red" Width="40" />
+
+                            <TextBlock Visibility="{Binding PersonalTaxAccount.IsInProgress, Converter={StaticResource boolToVisibilityConverter}}"
+                                        ToolTip="In progress" Text="&#xE895;" FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="Blue" Width="40" />                          
+
                             <TextBlock Text="{Binding PersonalTaxAccount.TaxYear}" Width="90" />
                             <TextBlock Text="{Binding PersonalTaxAccount.Notes}" Width="250" TextWrapping="Wrap" />
 
@@ -290,6 +294,11 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
+        
+        <!-- RYAN: sum of PersonalTaxAccountAccounts (T1) -->
+        <StackPanel Grid.Row="3" Grid.Column="1" Margin="0,5,0,0">
+            <Separator />
+            <Label Content="{Binding FilteredItemCount}" ContentStringFormat="{}{0} item(s) found" />
+        </StackPanel>
     </Grid>
 </UserControl>

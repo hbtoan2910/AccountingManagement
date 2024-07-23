@@ -309,7 +309,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 {
                     SaveTaxAccount(WSIBAccount);
                 }
-
+                
                 if (LIQAccount != null)
                 {
                     SaveTaxAccount(LIQAccount);

@@ -128,10 +128,45 @@
                 <StackPanel Width="200">
                     <TextBlock Text="PD7A Pay" FontWeight="SemiBold" Width="200" TextWrapping="Wrap" />
                     <TextBlock Text="{Binding SelectedPayrollPeriod.PreviousPayrollPeriod}" Foreground="Red" FontWeight="SemiBold" />
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <RadioButton Grid.Row="0" Grid.Column="0"
+                        Content="All" GroupName="PD7AStatusFilter"
+                        IsChecked="{Binding PD7AStatusFilter, Converter={StaticResource comparisonConverter}, ConverterParameter={x:Static enum:PayrollStatus.All}}" />
+
+                        <RadioButton Grid.Row="0" Grid.Column="1"
+                        Content="None" GroupName="PD7AStatusFilter"
+                        IsChecked="{Binding PD7AStatusFilter, Converter={StaticResource comparisonConverter}, ConverterParameter={x:Static enum:PayrollStatus.None}}" />
+
+                        <RadioButton Grid.Row="1" Grid.Column="0"
+                        Content="InProgress" GroupName="PD7AStatusFilter"
+                        IsChecked="{Binding PD7AStatusFilter, Converter={StaticResource comparisonConverter}, ConverterParameter={x:Static enum:PayrollStatus.InProgress}}" />
+
+                        <RadioButton Grid.Row="1" Grid.Column="1"
+                        Content="Done" GroupName="PD7AStatusFilter"
+                        IsChecked="{Binding PD7AStatusFilter, Converter={StaticResource comparisonConverter}, ConverterParameter={x:Static enum:PayrollStatus.Done}}" />
+                    </Grid>
                 </StackPanel>
                 <Rectangle HorizontalAlignment="Stretch" Width="1" Stroke="LightGray" Margin="5,0"/>
 
-                <TextBlock Text="Notes" FontWeight="SemiBold" Margin="5,0,5,0" Width="Auto" TextWrapping="Wrap" />
+                <TextBlock Text="Notes" FontWeight="SemiBold" Margin="5,0,5,0" Width="150" TextWrapping="Wrap" />
+                <Rectangle HorizontalAlignment="Stretch" Width="1" Stroke="LightGray" Margin="5,0"/>
+
+                <StackPanel Width="90">                    
+                    <ToggleButton Content="Timesheet" FontWeight="SemiBold"
+                                 IsChecked="{Binding IsTimesheetFilter, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <Rectangle HorizontalAlignment="Stretch" Width="1" Stroke="LightGray" Margin="5,0"/>
+                
             </StackPanel>
             <Rectangle Height="1" Stroke="LightGray" Margin="0,5"/>
         </StackPanel>

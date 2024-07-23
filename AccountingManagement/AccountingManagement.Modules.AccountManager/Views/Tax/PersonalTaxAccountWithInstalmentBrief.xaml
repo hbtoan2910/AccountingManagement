@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="AccountingManagement.Modules.AccountManager.Views.TaxAccountWithInstalmentBrief"
+﻿<UserControl x:Class="AccountingManagement.Modules.AccountManager.Views.PersonalTaxAccountWithInstalmentBrief"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -36,8 +36,8 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Border Grid.Row="0" Grid.ColumnSpan="2" 
-                BorderThickness="0,0,0,2" BorderBrush="CornflowerBlue" VerticalAlignment="Top">
-            <TextBlock Text="Instalment Details" FontSize="22" Foreground="DarkBlue" />
+            BorderThickness="0,0,0,2" BorderBrush="CornflowerBlue" VerticalAlignment="Top">
+            <TextBlock Text="T1-Instalment Details" FontSize="22" Foreground="DarkBlue" />
         </Border>
         <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,20,0,0">
             <Grid.ColumnDefinitions>
@@ -49,18 +49,18 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            
+
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Require Instalment" />
             <CheckBox Grid.Row="0" Grid.Column="1"
-                IsChecked="{Binding InstalmentRequired}"  IsEnabled="False"/>
-            
+            IsChecked="{Binding InstalmentRequired}"  IsEnabled="False"/>
+
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Instalment Amount" />
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding TaxAccountWithInstalment.InstalmentAmount}" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PersonalTaxAccount.InstalmentAmount}" />
 
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Instalment Due Date" Visibility="Hidden"/>
-                <DatePicker Grid.Row="2" Grid.Column="1" Margin="0,5,0,0" Visibility="Hidden"
-                        SelectedDate="{Binding TaxAccountWithInstalment.InstalmentDueDate, StringFormat=MM-dd-yyyy}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Instalment Due Date" Visibility="Hidden"/>
+            <DatePicker Grid.Row="2" Grid.Column="1" Margin="0,5,0,0" Visibility="Hidden"
+                    SelectedDate="{Binding PersonalTaxAccount.InstalmentDueDate, StringFormat=MM-dd-yyyy}"/>
 
         </Grid>
         <Grid Grid.Row="2" Grid.ColumnSpan="2">
@@ -72,14 +72,14 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Button Grid.Row="0" Grid.Column="0" Width="100" Background="CornflowerBlue" Foreground="White" Margin="40,5,0,0"
-                    Command="{Binding SaveTaxAccountCommand}">
+                Command="{Binding SavePersonalTaxAccountCommand}">
                 <StackPanel Orientation="Horizontal">
                     <ui:SymbolIcon Symbol="Save" Margin="0,0,10,0" />
                     <TextBlock Text="Save" Foreground="White" FontWeight="SemiBold" />
                 </StackPanel>
             </Button>
             <Button Grid.Row="0" Grid.Column="1" Width="100" Background="CornflowerBlue" Margin="0,5,0,0"
-                    Command="{Binding CloseDialogCommand}">
+                Command="{Binding CloseDialogCommand}">
                 <StackPanel Orientation="Horizontal">
                     <ui:SymbolIcon Symbol="Cancel" Foreground="White" Margin="0,0,10,0" />
                     <TextBlock Text="Cancel" Foreground="White" FontWeight="SemiBold" />
