@@ -55,13 +55,21 @@ namespace AccountingManagement.Services
 
         public LoginResult Login(string username, string password)
         {
-            if (username.Equals("charles.nguyen"))
+            if (username.Equals("ryan.admin"))
             {
                 return new LoginResult(LoginResultCode.Success,
                     new Guid("77777777-7777-7777-7777-777777777777"),
-                    "Charles",
-                    "Charles",
-                    1);
+                    "RyanAdmin",
+                    "RyanAdmin",
+                    1);//RYAN: this is an Admin account
+            }
+            if (username.Equals("ryan.user"))
+            {
+                return new LoginResult(LoginResultCode.Success,
+                    new Guid("88888888-8888-8888-8888-888888888888"),
+                    "RyanUser",
+                    "RyanUser",
+                    0);//RYAN: this is a User account
             }
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))

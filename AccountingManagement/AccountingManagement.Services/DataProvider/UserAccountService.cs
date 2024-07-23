@@ -49,6 +49,7 @@ namespace AccountingManagement.Services
                 existingUser.Email = userAccount.Email;
                 existingUser.PhoneNumber = userAccount.PhoneNumber;
                 existingUser.Active = userAccount.Active;
+                existingUser.Role = userAccount.Role;
             }
             else
             {

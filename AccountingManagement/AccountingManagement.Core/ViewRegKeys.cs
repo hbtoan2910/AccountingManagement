@@ -18,12 +18,14 @@ namespace AccountingManagement.Core
         public const string PayrollPayoutOverview = "PayrollPayoutOverview";
         public const string PersonalTaxAccountOverview = "PersonalTaxAccountOverview";
         public const string PersonalTaxAccountHistory = "PersonalTaxAccountHistory";
+        public const string PersonalTaxAccountWithInstalmentBrief = "PersonalTaxAccountWithInstalmentBrief";//RYAN
         public const string HSTFiling = "HSTFiling";
         public const string StatusBar = "StatusBar";
         public const string TaskHistory = "TaskHistory";
         public const string TaskOverview = "TaskOverview";
         public const string TaxAccountOverview = "TaxAccountOverview";
         public const string TaxAccountWithInstalmentOverview = "TaxAccountWithInstalmentOverview";
+        public const string TaxAccountWithInstalmentBrief = "TaxAccountWithInstalmentBrief";//RYAN
         public const string TaxAccountHistory = "TaxAccountHistory";
         public const string TaxInstalmentOverview = "TaxInstalmentOverview";
         public const string UserAccountOverview = "UserAccountOverview";

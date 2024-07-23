@@ -26,6 +26,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <!-- Filter & Menu Row -->
@@ -46,7 +47,7 @@
                 <Rectangle VerticalAlignment="Stretch" Width="1" Stroke="LightGray" Margin="10,0,10,0"/>
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <RadioButton Content="All"
+                        <RadioButton Content="Active" IsChecked="True"
                                      GroupName="AttributeFilter"/>
                         <!--<RadioButton Content="Has T1" IsChecked="{Binding FilterHasT1, UpdateSourceTrigger=PropertyChanged}"
                                      GroupName="AttributeFilter" />-->
@@ -208,12 +209,17 @@
                                         </Button.Content>
                                     </Button>
                                 </StackPanel>
-
                             </Grid>
                         </ContentControl>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            
+            <!-- RYAN: sum of TaxAccountAccounts (HST/Corporation) -->
+            <StackPanel Grid.Row="4" Margin="0,5,0,0">
+                <Separator/>
+                <Label Content="{Binding FilteredItemCount}" ContentStringFormat="{}{0} item(s) found" />
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

@@ -142,6 +142,47 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 }
             }
         }
+        //RYAN: add new filter for field Timesheet in Payroll table
+        private bool _isTimesheetFilter = false;
+        public bool IsTimesheetFilter
+        {
+            get { return _isTimesheetFilter; }
+            set
+            {
+                if (SetProperty(ref _isTimesheetFilter, value))
+                {
+                    RefreshView();
+                }
+            }
+        }
+        //RYAN: add new filter for PD7AStatus=2 (Done)
+        /*
+        private bool _isPD7ADoneFilter = false;
+        public bool IsPD7ADoneFilter
+        {
+            get { return _isPD7ADoneFilter; }
+            set
+            {
+                if (SetProperty(ref _isPD7ADoneFilter, value))
+                {
+                    RefreshView();
+                }
+            }
+        }
+        */
+
+        private PayrollStatus _pd7aStatusFilter = PayrollStatus.All;
+        public PayrollStatus PD7AStatusFilter
+        {
+            get { return _pd7aStatusFilter; }
+            set
+            {
+                if (SetProperty(ref _pd7aStatusFilter, value))
+                {
+                    RefreshView();
+                }
+            }
+        }
 
         public DelegateCommand RefreshPayrollOverviewCommand { get; private set; }
         public DelegateCommand OpenGeneratePayrollDialogCommand { get; private set; }
@@ -236,6 +277,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
             ExistingPayrollPeriods = _payrollService.GetLatestPayrollPeriodLookups(12);
             SelectedPayrollPeriod = ExistingPayrollPeriods.FirstOrDefault();
 
+            //RYAN: no data population here, why CollectionVieWSource suddenly has data ???
             CollectionViewSource.Filter += (s, e) =>
             {
                 var model = e.Item as BusinessPayrollModel;
@@ -278,7 +320,28 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                         return;
                     }
                 }
+                //RYAN: new filter added here
+                if (IsTimesheetFilter)
+                {
+                    if (!model.PayrollAccount.Timesheet)
+                    {
+                        e.Accepted = false;
+                        return;
+                    }
+                }
+                //RYAN: new filter for PD7AStatus <> PayrollStatus
+                if (PD7AStatusFilter != PayrollStatus.All)
+                {
+                    if (PD7AStatusFilter == PayrollStatus.None && (model.PayrollRecord.PD7AStatus != PayrollStatus.None)
+                        || PD7AStatusFilter == PayrollStatus.InProgress && (model.PayrollRecord.PD7AStatus != PayrollStatus.InProgress)
+                        || PD7AStatusFilter == PayrollStatus.Done && (model.PayrollRecord.PD7AStatus != PayrollStatus.Done))
+                    {
+                        e.Accepted = false;
+                        return;
+                    }
+                }
 
+                
                 e.Accepted = true;
             };
 
@@ -546,5 +609,6 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
         Payroll2Pending = 2,
         Payroll3Pending = 3
     }
+
 }
 

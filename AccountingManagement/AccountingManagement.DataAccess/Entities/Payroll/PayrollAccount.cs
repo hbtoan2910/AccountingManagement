@@ -33,6 +33,8 @@ namespace AccountingManagement.DataAccess.Entities
 
         public bool IsRunT5 { get; set; }
 
+        public bool Timesheet { get; set; }
+
         public string YearEndNotes { get; set; }
 
         public bool IsActive { get; set; }

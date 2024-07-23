@@ -17,6 +17,8 @@ using AccountingManagement.Modules.AccountManager.Utilities;
 using AccountingManagement.Services;
 using AccountingManagement.Services.Email;
 using Serilog;
+using System.Windows;
+
 
 namespace AccountingManagement.Modules.AccountManager.ViewModels
 {
@@ -49,6 +51,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 if (SetProperty(ref _ownerFilterText, value))
                 {
                     PersonalTaxAccountsView.Refresh();
+                    RaisePropertyChanged(nameof(FilteredItemCount));
                 }
             }
         }
@@ -62,6 +65,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 if (SetProperty(ref _taxYearFilter, value))
                 {
                     PersonalTaxAccountsView.Refresh();
+                    RaisePropertyChanged(nameof(FilteredItemCount));
                 }
             }
         }
@@ -75,8 +79,13 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 if (SetProperty(ref _t1ProgressFilter, value))
                 {
                     PersonalTaxAccountsView.Refresh();
+                    RaisePropertyChanged(nameof(FilteredItemCount));
                 }
             }
+        }
+        public int FilteredItemCount
+        {
+            get { return PersonalTaxAccountsView.Cast<object>()?.Count() ?? 0; }
         }
 
         public DelegateCommand RefreshPageCommand { get; private set; }
@@ -86,7 +95,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
         public DelegateCommand<PersonalTaxAccount> UpdateStep4StatusCommand { get; private set; }
         public DelegateCommand<PersonalTaxAccount> UpdateStep5StatusCommand { get; private set; }
         public DelegateCommand<OwnerPersonalTaxAccountModel> ConfirmTaxFiledCommand { get; private set; }
-        public DelegateCommand<PersonalTaxAccount> OpenPersonalTaxAccountDetailsDialogCommand { get; private set; }
+        public DelegateCommand<PersonalTaxAccount> OpenOwnerDetailsDialogCommand { get; private set; }
         public DelegateCommand<Owner> NavigateToOwnerOverviewCommand { get; private set; }
         public DelegateCommand NavigateToPersonalTaxAccountHistoryCommand { get; private set; }
         #endregion
@@ -128,7 +137,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
             UpdateStep5StatusCommand = new DelegateCommand<PersonalTaxAccount>(UpdateStep5Status);
             ConfirmTaxFiledCommand = new DelegateCommand<OwnerPersonalTaxAccountModel>(ConfirmTaxFiled);
 
-            OpenPersonalTaxAccountDetailsDialogCommand = new DelegateCommand<PersonalTaxAccount>(OpenPersonalTaxAccountDetailsDialog);
+            OpenOwnerDetailsDialogCommand = new DelegateCommand<PersonalTaxAccount>(OpenOwnerDetailsDialog);
             NavigateToOwnerOverviewCommand = new DelegateCommand<Owner>(NavigateToOwnerOverview);
             NavigateToPersonalTaxAccountHistoryCommand = new DelegateCommand(NavigateToPersonalTaxAccountHistory);
 
@@ -199,7 +208,8 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 e.Accepted = true;
             };
 
-            SortByOwnerName();
+            //SortByOwnerName();
+            SortByHighPriorityAndInProgress();
         }
 
         private bool SignatureNotSent(PersonalTaxFilingProgress progress)
@@ -402,19 +412,87 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
 
             try
             {
-                _taxFilingHandler.ConfirmTaxFiled(model.PersonalTaxAccount, model.ConfirmText, confirmDate, currentUserId);
+                /* Trigger popup asking if Tax Instalment needed for account with Sole-proprietorship = 1 */
+                var ownerId = model.Owner.Id;
+                List<Business> businesses = _businessOwnerService.GetBusinessByOwnerId(ownerId);
 
-                model.ConfirmText = string.Empty;
-
-                var oldRecord = PersonalTaxAccountModels.FirstOrDefault(x => x.PersonalTaxAccount.Id == model.PersonalTaxAccount.Id);
-                var updated = _taxAccountService.GetPersonalTaxAccountById(model.PersonalTaxAccount.Id);
-
-                if (oldRecord != null && updated != null)
+                //Logic: an owner can have multiple businesses, only need 1 business with Sole-proprietorship = 1 => logic = true
+                var logic = false;
+                foreach (Business business in businesses)
                 {
-                    oldRecord.PersonalTaxAccount = updated;
-
-                    PersonalTaxAccountsView.Refresh();
+                    if (business.IsSoleProprietorship == true)
+                    {
+                        logic = true;
+                        break;
+                    }
                 }
+
+                if (logic)
+                {
+                    //RYAN: popup to check if instalment is needed
+                    MessageBoxResult mbResult = MessageBox.Show("Is Instalment needed?", "Instalment Confirmation", MessageBoxButton.YesNo);
+                    if (mbResult == MessageBoxResult.Yes)
+                    {
+                        // Handle MessageBox.Yes result
+                        if (ownerId == null)
+                        {
+                            return;
+                        }
+                        var parameters = new DialogParameters();
+                        parameters.Add("OwnerId", ownerId.ToString());
+                        //parameters.Add("BusinessId", businessId.ToString());
+
+                        _dialogService.ShowDialog(nameof(Views.PersonalTaxAccountWithInstalmentBrief), parameters, dialog =>
+                        {
+                            if (dialog.Result == ButtonResult.OK)
+                            {
+                                //RYAN: save to db with updated data: [user-input Instalment amount & auto-generated Instalment due date with a logic]
+
+                                //RYAN: do the filing, after this, EndingPeriod and DueDate will be updated                           
+                                _taxFilingHandler.ConfirmTaxFiled(model.PersonalTaxAccount, model.ConfirmText, confirmDate, currentUserId);
+
+                                model.ConfirmText = string.Empty;
+
+                                var oldRecord = PersonalTaxAccountModels.FirstOrDefault(x => x.PersonalTaxAccount.Id == model.PersonalTaxAccount.Id);
+                                var updated = _taxAccountService.GetPersonalTaxAccountById(model.PersonalTaxAccount.Id);
+
+                                if (oldRecord != null && updated != null)
+                                {
+                                    oldRecord.PersonalTaxAccount = updated;
+
+                                    PersonalTaxAccountsView.Refresh();
+                                }
+                            }
+                            else
+                            {
+                                //do nothing
+                            }
+
+                        });
+                    } else
+                    {
+                        // Handle MessageBox.No result
+                        if (ownerId == null)
+                        {
+                            return;
+                        }
+
+                        _taxFilingHandler.ConfirmTaxFiled(model.PersonalTaxAccount, model.ConfirmText, confirmDate, currentUserId);
+
+                        model.ConfirmText = string.Empty;
+
+                        var oldRecord = PersonalTaxAccountModels.FirstOrDefault(x => x.PersonalTaxAccount.Id == model.PersonalTaxAccount.Id);
+                        var updated = _taxAccountService.GetPersonalTaxAccountById(model.PersonalTaxAccount.Id);
+
+                        if (oldRecord != null && updated != null)
+                        {
+                            oldRecord.PersonalTaxAccount = updated;
+
+                            PersonalTaxAccountsView.Refresh();
+                        }
+                    }
+                }
+
             }
             catch (Exception ex)
             {
@@ -472,14 +550,22 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
             _regionManager.RequestNavigate(RegionNames.MainViewRegion, ViewRegKeys.PersonalTaxAccountHistory, navParams);
         }
 
-        private void OpenPersonalTaxAccountDetailsDialog(PersonalTaxAccount account)
+        private void OpenOwnerDetailsDialog(PersonalTaxAccount account)
         {
             if (account == null)
             {
                 return;
             }
+            
+            var parameters = new DialogParameters($"OwnerId={account.OwnerId}");
 
-            // TODO: implement details form
+            _dialogService.ShowDialog(nameof(Views.OwnerDetails), parameters, p =>
+            {
+                if (p.Result == ButtonResult.OK)
+                {
+                    RefreshPage();
+                }
+            });
         }
 
         private void RefreshPage()
@@ -494,12 +580,23 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
         }
 
         private void SortByOwnerName()
-        {
+        {            
             CollectionViewSource.SortDescriptions.Clear();
             CollectionViewSource.SortDescriptions.AddRange(new[]
             {
                 new SortDescription("PersonalTaxAccount.IsHighPriority", ListSortDirection.Descending),
                 new SortDescription("Owner.Name", ListSortDirection.Ascending),
+            });           
+        }
+
+        //RYAN: new sorting structure
+        private void SortByHighPriorityAndInProgress()
+        {
+            CollectionViewSource.SortDescriptions.Clear();
+            CollectionViewSource.SortDescriptions.AddRange(new[]
+            {
+                new SortDescription("PersonalTaxAccount.IsHighPriority", ListSortDirection.Descending),
+                new SortDescription("PersonalTaxAccount.IsInProgress", ListSortDirection.Ascending),
             });
         }
 

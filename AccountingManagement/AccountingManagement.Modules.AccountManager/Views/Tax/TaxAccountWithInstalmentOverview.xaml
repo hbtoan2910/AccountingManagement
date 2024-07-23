@@ -24,6 +24,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Side bar buttons -->
@@ -91,7 +92,7 @@
                 </StackPanel>
 
                 <StackPanel>
-                    <TextBlock Text="Assignment" Width="140"/>
+                    <TextBlock Text="Assignee" Width="140"/>
                     <ComboBox Margin="5,3" Width="120" IsEditable="True"
                           ItemsSource="{Binding UserAccounts}" DisplayMemberPath="DisplayName"
                           SelectedValue="{Binding SelectedUserAccount, UpdateSourceTrigger=PropertyChanged}">
@@ -100,47 +101,57 @@
 
                 <TextBlock Text="Progress Notes" Width="250"/>
                 <TextBlock Text="Cycle" Width="95"/>
-                <TextBlock Text="{Binding EndingPeriodHeaderText}" Width="105" FontWeight="SemiBold">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="FontSize" Value="15"/>
-                                    <Setter Property="Foreground" Value="Blue"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
+
+                <StackPanel>
+                    <TextBlock Text="{Binding EndingPeriodHeaderText}" Width="105" FontWeight="SemiBold">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="FontSize" Value="15"/>
+                                        <Setter Property="Foreground" Value="Blue"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDown">
                             <i:InvokeCommandAction Command="{Binding SortByEndingPeriodCommand}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                </TextBlock>
-                <TextBlock Text="{Binding DueDateHeaderText}" Width="105" FontWeight="SemiBold">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="FontSize" Value="15"/>
-                                    <Setter Property="Foreground" Value="Blue"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
+                    </TextBlock>
+                    <TextBox Text="{Binding EndingPeriodFilterText, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,10,3"
+                             ui:ControlHelper.PlaceholderText="Search by Ending Period" />
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="{Binding DueDateHeaderText}" Width="105" FontWeight="SemiBold">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="FontSize" Value="15"/>
+                                        <Setter Property="Foreground" Value="Blue"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDown">
                             <i:InvokeCommandAction Command="{Binding SortByDueDateCommand}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                </TextBlock>
-                <TextBlock Text="" Width="50" />
+                    </TextBlock>
+                    <TextBox Text="{Binding DueDateFilterText, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,10,3"
+                             ui:ControlHelper.PlaceholderText="Search by Due Date" />
+                </StackPanel>
+                
+                <TextBlock Text="" Width="70" />
                 <TextBlock Text="Confirm Filing" Width="195"/>
-                <TextBlock Text="Instalment Due Date" Width="90" TextWrapping="Wrap"/>
+                <!--<TextBlock Text="Instalment Due Date" Width="90" TextWrapping="Wrap"/>
                 <TextBlock Text="Instalment Amount" Width="90" TextWrapping="Wrap" Margin="10,0,0,0"/>
                 <TextBlock Text="" Width="50" />
-                <TextBlock Text="Instalment Confirm" Width="90" TextWrapping="Wrap" Margin="10,0,0,0"/>
-
+                <TextBlock Text="Instalment Confirm" Width="90" TextWrapping="Wrap" Margin="10,0,0,0"/>-->
             </StackPanel>
             <Rectangle Grid.Row="0" Grid.Column="1" Height="1" Stroke="LightGray" Margin="0,5,0,5"/>
         </StackPanel>
@@ -195,10 +206,10 @@
                             <TextBlock Text="{Binding TaxAccount.UserAccount.DisplayName}" Width="140" TextWrapping="Wrap" />
                             <TextBlock Text="{Binding TaxAccount.ProgressNotes}" Width="250" TextWrapping="Wrap"/>
                             <TextBlock Text="{Binding TaxAccount.Cycle}" Width="100" Margin="10,0,0,0" />
-                            <TextBlock Text="{Binding TaxAccount.EndingPeriod, StringFormat=yyyy-MMM}" Width="100" />
-                            <TextBlock Text="{Binding TaxAccount.DueDate, StringFormat=MM-dd-yyyy}" Width="100" />
+                            <TextBlock Text="{Binding TaxAccount.EndingPeriod, StringFormat=yyyy-MMM}" Width="160" TextAlignment="Center"/>
+                            <TextBlock Text="{Binding TaxAccount.DueDate, StringFormat=MM-dd-yyyy}" Width="160" TextAlignment="Center"/>
 
-                            <Button Width="50" ToolTip="Send reminder Email"
+                            <Button Width="50" ToolTip="Send reminder Email" Margin="20,0,0,0"
                                     Command="{Binding Path=DataContext.SendPaperworkReminderEmailCommand, ElementName=TaxAccountOverviewListView}" 
                                     CommandParameter="{Binding TaxAccount}">
                                 <Button.Content>
@@ -235,7 +246,7 @@
                                 </Button>
                             </StackPanel>
 
-                            <StackPanel Orientation="Horizontal" Width="420"
+                            <!--<StackPanel Orientation="Horizontal" Width="420"
                                         Visibility="{Binding TaxAccount.InstalmentRequired, Converter={StaticResource boolToVisibilityConverter}}">
                                 <TextBlock Width="100" Text="{Binding TaxAccount.InstalmentDueDate, StringFormat=MM-dd-yyyy}" />
                                 <TextBlock Width="100" Text="{Binding TaxAccount.InstalmentAmount, StringFormat={}{0:C}}" />
@@ -272,7 +283,7 @@
                                         </StackPanel>
                                     </Button.Content>
                                 </Button>
-                            </StackPanel>
+                            </StackPanel>-->
 
                             <Button Width="50" Margin="25,0,0,0"
                                     Command="{Binding Path=DataContext.OpenTaxAccountDetailsDialogCommand, ElementName=TaxAccountOverviewListView}" 
@@ -290,5 +301,11 @@
             </ListView.ItemTemplate>
 
         </ListView>
+
+        <!-- RYAN: sum of TaxAccountAccounts (HST/Corporation) -->
+        <StackPanel Grid.Row="3" Grid.Column="1" Margin="0,5,0,0">
+            <Separator />
+            <Label Content="{Binding FilteredItemCount}" ContentStringFormat="{}{0} item(s) found" />
+        </StackPanel>
     </Grid>
 </UserControl>

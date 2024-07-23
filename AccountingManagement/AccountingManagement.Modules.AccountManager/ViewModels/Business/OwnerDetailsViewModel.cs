@@ -9,6 +9,8 @@ using Prism.Services.Dialogs;
 using AccountingManagement.Core.Mvvm;
 using AccountingManagement.DataAccess.Entities;
 using AccountingManagement.Services;
+using Serilog;
+using System.Windows;
 
 namespace AccountingManagement.Modules.AccountManager.ViewModels
 {
@@ -34,6 +36,13 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
         { 
             get { return _addOrRemoveBusinessOwnerErrorText; } 
             set { SetProperty(ref _addOrRemoveBusinessOwnerErrorText, value); }
+        }
+
+        private string _errorMessage;
+        public string ErrorMessage
+        {
+            get { return _errorMessage; }
+            set { SetProperty(ref _errorMessage, value); }
         }
 
         #region Filterable Business List in a Combo Box
@@ -137,7 +146,10 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
 
                 if (T1Account != null)
                 {
-                    SavePersonalTaxAccount(T1Account);
+                    if (!SavePersonalTaxAccount(T1Account))
+                    {
+                        return;
+                    }             
                 }
 
                 if (owner.BusinessOwners.Count == 0 && SelectedBusiness != null)
@@ -236,9 +248,33 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
             };
         }
 
-        private void SavePersonalTaxAccount(PersonalTaxAccount account)
+        private bool SavePersonalTaxAccount(PersonalTaxAccount account)
         {
-            _taxAccountService.UpsertPersonalTaxAccount(account);
+            try
+            {
+                if (account.InstalmentAmount != 0)
+                {
+                    _taxAccountService.UpsertPersonalTaxAccount(account);
+
+                    RaiseRequestClose(new DialogResult(ButtonResult.OK));
+
+                    return true;
+                }
+                else
+                {
+                    MessageBox.Show("Instalment Amount cannot be empty", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);    
+                    
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Unexpected error while saving Personal Tax Account. {ex.Message}";
+                Log.Error($"Error saving Personal Tax Account."
+                    + $" PersonalAccountId:{account.Id}, OwnerId:{account.OwnerId}");
+                return false;
+            }
+
         }
 
         private void ShowErrorMessage(string message, Exception ex)

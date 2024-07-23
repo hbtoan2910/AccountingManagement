@@ -42,6 +42,7 @@
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Username" VerticalAlignment="Center" />
@@ -63,21 +64,26 @@
                        Visibility="{Binding IsAdmin, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=True}" />
             <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding UserAccount.Active}" Margin="0,3,0,0"
                       Visibility="{Binding IsAdmin, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=True}" />
-
-            <Rectangle Grid.Row="5" Grid.ColumnSpan="2" Height="1" HorizontalAlignment="Stretch" Stroke="LightGray" Margin="0,5" />
-            <TextBlock Grid.Row="6" Grid.Column="0" Text="Old Password" VerticalAlignment="Center"
+            
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="IsAdmin" VerticalAlignment="Center"
+                       Visibility="{Binding IsAdmin, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=True}" />
+            <CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding UserAccount.Role}" Margin="0,3,0,0"
+                      Visibility="{Binding IsAdmin, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=True}" />
+            
+            <Rectangle Grid.Row="6" Grid.ColumnSpan="2" Height="1" HorizontalAlignment="Stretch" Stroke="LightGray" Margin="0,5" />
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Old Password" VerticalAlignment="Center"
                        Visibility="{Binding IsNewAccount, Converter={StaticResource boolToVisibilityReverseConverter}, ConverterParameter=True}"/>
-            <PasswordBox Grid.Row="6" Grid.Column="1" x:Name="OldPassword" Margin="0,3,0,0"
+            <PasswordBox Grid.Row="7" Grid.Column="1" x:Name="OldPassword" Margin="0,3,0,0"
                          Visibility="{Binding IsNewAccount, Converter={StaticResource boolToVisibilityReverseConverter}, ConverterParameter=True}"/>
             
-            <TextBlock Grid.Row="7" Grid.Column="0" Text="New Password" VerticalAlignment="Center" />
-            <PasswordBox Grid.Row="7" Grid.Column="1" x:Name="NewPassword" Margin="0,3,0,0" />
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="New Password" VerticalAlignment="Center" />
+            <PasswordBox Grid.Row="8" Grid.Column="1" x:Name="NewPassword" Margin="0,3,0,0" />
 
-            <TextBlock Grid.Row="8" Grid.Column="0" Text="Confirm New Password" VerticalAlignment="Center" />
-            <PasswordBox Grid.Row="8" Grid.Column="1" x:Name="ConfirmNewPassword" Margin="0,3,0,3" />
-            <Rectangle Grid.Row="9" Grid.ColumnSpan="2" Height="1" HorizontalAlignment="Stretch" Stroke="LightGray" Margin="0,5" />
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="Confirm New Password" VerticalAlignment="Center" />
+            <PasswordBox Grid.Row="9" Grid.Column="1" x:Name="ConfirmNewPassword" Margin="0,3,0,3" />
+            <Rectangle Grid.Row="10" Grid.ColumnSpan="2" Height="1" HorizontalAlignment="Stretch" Stroke="LightGray" Margin="0,5" />
 
-            <StackPanel Grid.Row="10" Grid.Column="1">
+            <StackPanel Grid.Row="11" Grid.Column="1">
                 <DockPanel LastChildFill="True" Margin="0,20,0,0">
                     <Button DockPanel.Dock="Right" Width="95" Background="Orange" Foreground="White"
                             Command="{Binding DeleteUserAccountCommand}"

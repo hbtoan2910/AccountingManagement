@@ -11,6 +11,7 @@ using AccountingManagement.DataAccess.Entities;
 using AccountingManagement.Modules.AccountManager.Utilities;
 using AccountingManagement.Services;
 using Microsoft.Win32;
+using System.Linq;
 
 namespace AccountingManagement.Modules.AccountManager.ViewModels
 {
@@ -36,6 +37,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 if (SetProperty(ref _ownerFilterText, value))
                 {
                     OwnerView.Refresh();
+                    RaisePropertyChanged(nameof(FilteredItemCount));
                 }
             }
         }
@@ -49,6 +51,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 if (SetProperty(ref _filterHasT1, value))
                 {
                     OwnerView.Refresh();
+                    RaisePropertyChanged(nameof(FilteredItemCount));
                 }
             }
         }
@@ -62,6 +65,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 if (SetProperty(ref _filterInactiveT1, value))
                 {
                     OwnerView.Refresh();
+                    RaisePropertyChanged(nameof(FilteredItemCount));
                 }
             }
         }
@@ -75,6 +79,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 if (SetProperty(ref _filterNoT1, value))
                 {
                     OwnerView.Refresh();
+                    RaisePropertyChanged(nameof(FilteredItemCount));
                 }
             }
         }
@@ -89,8 +94,14 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 if (SetProperty(ref _includeDeletedOwner, value))
                 {
                     OwnerView.Refresh();
+                    RaisePropertyChanged(nameof(FilteredItemCount));
                 }
             }
+        }
+
+        public int FilteredItemCount
+        {
+            get { return OwnerView.Cast<object>()?.Count() ?? 0; }
         }
 
         public bool IsUploadOwnerListEnabled => _globalService.CurrentSession.Role == Core.Authentication.AccountRole.Administator;
@@ -100,8 +111,6 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
         public DelegateCommand<Owner> OpenOwnerDetailsDialogCommand { get; private set; }
         public DelegateCommand<Owner> DeleteOwnerCommand { get; private set; }
         public DelegateCommand<Owner> UndoDeleteOwnerCommand { get; private set; }
-
-
         public DelegateCommand UploadOwnerFromFileCommand { get; private set; }
         #endregion
 
@@ -143,13 +152,13 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                     e.Accepted = false;
                     return;
                 }
-
-                if (IncludeDeletedOwner != owner.IsDeleted)
+                //RYAN: this step filters active owners only (IsDeleted=0), which make CollectionViewSource & OwnerView different
+                if (IncludeDeletedOwner != owner.IsDeleted) 
                 {
                     e.Accepted = false;
                     return;
                 }
-
+                
                 /** if (FilterHasT1 && (owner.T1Account == null || owner.T1Account.IsActive == false))
                 {
                     e.Accepted = false;
@@ -233,9 +242,10 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 {
                     _businessOwnerService.DeleteOwner(owner.Id);
 
-                    owner.IsDeleted = true;
+                    //owner.IsDeleted = true;
+                    //OwnerView.Refresh();
 
-                    OwnerView.Refresh();
+                    RefreshView();
                     RaisePropertyChanged("OwnerView");
                 }
             }
@@ -258,9 +268,9 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 {
                     _businessOwnerService.UndoDeleteOwner(owner.Id);
 
-                    owner.IsDeleted = false;
-
-                    OwnerView.Refresh();
+                    //owner.IsDeleted = false;
+                    //OwnerView.Refresh();
+                    RefreshView();
                     RaisePropertyChanged("OwnerView");
                 }
             }

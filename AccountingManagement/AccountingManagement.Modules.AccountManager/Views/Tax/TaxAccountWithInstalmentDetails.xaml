@@ -124,23 +124,30 @@
                    Visibility="Collapsed"/>
         <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding TaxAccount.InstalmentRequired}"
                   Visibility="Collapsed"/>
-
+        <!--RYAN: previously 
         <Grid Grid.Row="7" Grid.ColumnSpan="2"
               IsEnabled="{Binding TaxAccount.InstalmentRequired}">
-            <Grid.ColumnDefinitions>
+        -->    
+        <!--RYAN: as requested, now -->    
+        <Grid Grid.Row="7" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="Instalment Amount" />
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TaxAccount.InstalmentAmount}" />
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Require Instalment" />
+            <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding TaxAccount.InstalmentRequired}" />
+            
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Instalment Amount" />
+            <TextBox IsEnabled="{Binding TaxAccount.InstalmentRequired}" Grid.Row="1" Grid.Column="1" Text="{Binding TaxAccount.InstalmentAmount}" />
 
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="Instalment Due Date" />
-            <DatePicker Grid.Row="1" Grid.Column="1" Width="170" Margin="0,5,0,0"
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Instalment Due Date" />
+            <DatePicker IsEnabled="{Binding TaxAccount.InstalmentRequired}" Grid.Row="2" Grid.Column="1" Width="170" Margin="0,5,0,0"
                         SelectedDate="{Binding TaxAccount.InstalmentDueDate, StringFormat=MM-dd-yyyy}" />
         </Grid>
 

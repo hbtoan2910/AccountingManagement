@@ -54,6 +54,8 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 if (SetProperty(ref _selectedUserAccount, value))
                 {
                     TaxInstalmentAccountsView.Refresh();
+
+                    RaisePropertyChanged(nameof(TaxInstalmentAccountsCount));
                 }
             }
         }
@@ -67,6 +69,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 if (SetProperty(ref _businessFilterText, value))
                 {
                     TaxInstalmentAccountsView.Refresh();
+                    RaisePropertyChanged(nameof(TaxInstalmentAccountsCount));
                 }
             }
         }
@@ -183,14 +186,17 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                     return;
                 }
 
-                if (StringContainsFilterText(model.Business.LegalName, BusinessFilterText)
+                if (string.IsNullOrWhiteSpace(BusinessFilterText) == false)
+                {
+                    if (StringContainsFilterText(model.Business.LegalName, BusinessFilterText)
                     || StringContainsFilterText(model.Business.OperatingName, BusinessFilterText))
-                {
-                    e.Accepted = true;
-                }
-                else
-                {
-                    e.Accepted = false;
+                    {
+                        e.Accepted = true;
+                    }
+                    else
+                    {
+                        e.Accepted = false;
+                    }
                 }
             };
 
@@ -203,6 +209,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
 
             // TODO: Can I skip this step?
             RaisePropertyChanged("TaxInstalmentAccountsView");
+            RaisePropertyChanged("TaxInstalmentAccountsCount");
 
             // TODO: Or this step?
             TaxInstalmentAccountsView.Refresh();

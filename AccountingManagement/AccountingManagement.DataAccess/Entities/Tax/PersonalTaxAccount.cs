@@ -32,8 +32,13 @@ namespace AccountingManagement.DataAccess.Entities
         public bool Step4Completed { get; set; }
 
         public bool IsHighPriority { get; set; }
-
+        public bool IsInProgress { get; set; } //RYAN: new column added
         public bool IsActive { get; set; }
+
+        public bool InstalmentRequired { get; set; } //RYAN: new column added
+        public decimal InstalmentAmount { get; set; } //RYAN: new column added
+        public DateTime? InstalmentDueDate { get; set; } //RYAN: new column added
+
 
         public List<PersonalTaxAccountLog> PersonalTaxAccountLogs { get; set; }
 
@@ -45,6 +50,8 @@ namespace AccountingManagement.DataAccess.Entities
             Step3Completed = false;
             Step4Completed = false;
             IsHighPriority = false;
+            IsInProgress = false;
+            InstalmentRequired = false; //RYAN: need this ???
         }
     }
 }

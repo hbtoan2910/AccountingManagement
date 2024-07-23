@@ -15,6 +15,8 @@ using AccountingManagement.Modules.AccountManager.Models;
 using AccountingManagement.Modules.AccountManager.Utilities;
 using AccountingManagement.Services;
 using AccountingManagement.Services.Email;
+using System.Windows;
+using static Dropbox.Api.TeamLog.TrustedTeamsRequestAction;
 
 namespace AccountingManagement.Modules.AccountManager.ViewModels
 {
@@ -54,6 +56,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 if (SetProperty(ref _selectedUserAccount, value))
                 {
                     BusinessTaxAccountsView.Refresh();
+                    RaisePropertyChanged(nameof(FilteredItemCount));
                 }
             }
         }
@@ -67,22 +70,57 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                 if (SetProperty(ref _businessFilterText, value))
                 {
                     BusinessTaxAccountsView.Refresh();
+                    RaisePropertyChanged(nameof(FilteredItemCount));
                 }
             }
         }
+        public int FilteredItemCount
+        {
+            get { return BusinessTaxAccountsView.Cast<object>()?.Count() ?? 0; }
+        }
 
+        /* Ending Period - Header initialization */
         private string _endingPeriodHeaderText = "Ending Period";
         public string EndingPeriodHeaderText
         {
             get { return _endingPeriodHeaderText; }
             set { SetProperty(ref _endingPeriodHeaderText, value); }
         }
+        /* Ending Period filter */
+        private string _endingPeriodFilterText;
+        public string EndingPeriodFilterText
+        {
+            get { return _endingPeriodFilterText; }
+            set
+            {
+                if (SetProperty(ref _endingPeriodFilterText, value))
+                {
+                    BusinessTaxAccountsView.Refresh();
+                    RaisePropertyChanged(nameof(FilteredItemCount));
+                }
+            }
+        }
 
+        /* Due Date - Header initialization */
         private string _dueDateHeaderText = "Due Date";
         public string DueDateHeaderText
         {
             get { return _dueDateHeaderText; }
             set { SetProperty(ref _dueDateHeaderText, value); }
+        }
+        /* Due Date filter */
+        private string _dueDateFilterText;
+        public string DueDateFilterText
+        {
+            get { return _dueDateFilterText; }
+            set
+            {
+                if (SetProperty(ref _dueDateFilterText, value))
+                {
+                    BusinessTaxAccountsView.Refresh();
+                    RaisePropertyChanged(nameof(FilteredItemCount));
+                }
+            }
         }
 
         public List<TaxAccountType> TaxAccountTypes
@@ -108,6 +146,7 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
                     LoadTaxAccounts();
 
                     RaisePropertyChanged("BusinessTaxAccountsView");
+                    RaisePropertyChanged(nameof(FilteredItemCount));
                 }
             }
         }
@@ -174,26 +213,86 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
 
             LoadTaxAccounts();
 
-            CollectionViewSource.Filter += (s, e) =>
+            CollectionViewSource.Filter += (Object s, FilterEventArgs e) =>
             {
-                if (!(e.Item is BusinessTaxAccountWithInstalmentModel model)
-                    || (string.IsNullOrWhiteSpace(BusinessFilterText) && SelectedUserAccount == null))
-                {
-                    e.Accepted = true;
-                    return;
-                }
+                //if (!(e.Item is BusinessTaxAccountWithInstalmentModel model)
+                //    || (string.IsNullOrWhiteSpace(BusinessFilterText) && (string.IsNullOrWhiteSpace(EndingPeriodFilterText)) && (string.IsNullOrWhiteSpace(DueDateFilterText))
+                //    && SelectedUserAccount == null))
+                //{
+                //    e.Accepted = true;
+                //    return;
+                //}
+                //// Filter by Assignee
+                //if (SelectedUserAccount != null
+                //    && model.TaxAccount.UserAccountId != SelectedUserAccount.Id)
+                //{
+                //    e.Accepted = false;
+                //    return;
+                //}
+                //// Filter by Ending Period
+                //var endingPeriod = model.TaxAccount.EndingPeriod.ToString("yyyy-MMM");
+                //if (EndingPeriodFilterText != null && StringContainsFilterText(endingPeriod, EndingPeriodFilterText))
+                //{
+                //    e.Accepted = true;
+                //}
+                //else
+                //{
+                //    e.Accepted = false;
+                //}
+                //// Filter by Due Date
+                //if (DueDateFilterText != null && StringContainsFilterText(model.TaxAccount.DueDate.ToString(), DueDateFilterText))
+                //{
+                //    e.Accepted = true;
 
-                if (SelectedUserAccount != null
-                    && model.TaxAccount.UserAccountId != SelectedUserAccount.Id)
-                {
-                    e.Accepted = false;
-                    return;
-                }
+                //}
+                //else
+                //{
+                //    e.Accepted = false;
+                //}
+                //// Filter by LegalName or OperatingName
+                //if (StringContainsFilterText(model.Business.LegalName, BusinessFilterText)
+                //    || StringContainsFilterText(model.Business.OperatingName, BusinessFilterText))
+                //{
+                //    e.Accepted = true;
+                //}
+                //else
+                //{
+                //    e.Accepted = false;
+                //}
 
-                if (StringContainsFilterText(model.Business.LegalName, BusinessFilterText)
-                    || StringContainsFilterText(model.Business.OperatingName, BusinessFilterText))
+                if (e.Item is BusinessTaxAccountWithInstalmentModel model)
                 {
-                    e.Accepted = true;
+                    bool isAccepted = true;
+
+                    // Filter by Assignee
+                    if (SelectedUserAccount != null && model.TaxAccount.UserAccountId != SelectedUserAccount.Id)
+                    {
+                        isAccepted = false;
+                    }
+
+                    // Filter by Ending Period
+                    if (!string.IsNullOrWhiteSpace(EndingPeriodFilterText) &&
+                        !StringContainsFilterText(model.TaxAccount.EndingPeriod.ToString("yyyy-MMM"), EndingPeriodFilterText))
+                    {
+                        isAccepted = false;
+                    }
+
+                    // Filter by Due Date
+                    if (!string.IsNullOrWhiteSpace(DueDateFilterText) &&
+                        !StringContainsFilterText(model.TaxAccount.DueDate.ToString("MM-dd-yyyy"), DueDateFilterText))
+                    {
+                        isAccepted = false;
+                    }
+
+                    // Filter by LegalName or OperatingName
+                    if (!string.IsNullOrWhiteSpace(BusinessFilterText) &&
+                        !(StringContainsFilterText(model.Business.LegalName, BusinessFilterText) ||
+                          StringContainsFilterText(model.Business.OperatingName, BusinessFilterText)))
+                    {
+                        isAccepted = false;
+                    }
+
+                    e.Accepted = isAccepted;
                 }
                 else
                 {
@@ -226,30 +325,75 @@ namespace AccountingManagement.Modules.AccountManager.ViewModels
         {
             var currentUserId = _globalService.CurrentSession.UserAccountId;
             var confirmDate = DateTime.Now;
+            var businessId = model.Business.Id;
+            var taxAccountId = model.TaxAccount.Id;
 
             try
             {
+
                 //RYAN: popup to check if instalment is needed
-                var parameters = new DialogParameters($"");
-
-                _dialogService.ShowDialog(nameof(Views.BusinessDetails), parameters, p =>
+                MessageBoxResult mbResult = MessageBox.Show("Is Instalment needed?", "Instalment Confirmation", MessageBoxButton.YesNo);
+                if (mbResult == MessageBoxResult.Yes)
                 {
+                    // Handle MessageBox.Yes result
+                    if (taxAccountId == null)
+                    {
+                        return;
+                    }
 
-                });
+                    var parameters = new DialogParameters();
+                    parameters.Add("TaxAccountId", taxAccountId.ToString());
+                    parameters.Add("BusinessId", businessId.ToString());
 
-                _filingHandler.ConfirmTaxFiling(model.TaxAccount, model.ConfirmText, confirmDate, currentUserId);
+                    _dialogService.ShowDialog(nameof(Views.TaxAccountWithInstalmentBrief), parameters, dialog =>
+                    {
+                        if (dialog.Result == ButtonResult.OK)
+                        {
+                            //RYAN: save to db with updated data: [user-input Instalment amount & auto-generated Instalment due date with a logic]
 
-                model.ConfirmText = string.Empty;
+                            //RYAN: do the filing, after this, EndingPeriod and DueDate will be updated                            
+                            _filingHandler.ConfirmTaxFiling(model.TaxAccount, model.ConfirmText, confirmDate, currentUserId);
 
-                var oldRecord = TaxAccountModels.FirstOrDefault(x => x.TaxAccount.Id == model.TaxAccount.Id);
-                var updated = _taxAccountService.GetTaxAccountWithInstalmentById(model.TaxAccount.Id);
+                            model.ConfirmText = string.Empty;
 
-                if (oldRecord != null && updated != null)
+                            var oldRecord = TaxAccountModels.FirstOrDefault(x => x.TaxAccount.Id == model.TaxAccount.Id);
+                            var updated = _taxAccountService.GetTaxAccountWithInstalmentById(model.TaxAccount.Id);
+
+                            if (oldRecord != null && updated != null)
+                            {
+                                oldRecord.TaxAccount = updated;
+
+                                BusinessTaxAccountsView.Refresh();
+                            }
+                        }
+                        else
+                        {
+                            //do nothing
+                        }
+
+                    });
+                } else
                 {
-                    oldRecord.TaxAccount = updated;
+                    // Handle MessageBox.No result
+                    if (taxAccountId == null)
+                    {
+                        return;
+                    }
 
-                    BusinessTaxAccountsView.Refresh();
-                }
+                    _filingHandler.ConfirmTaxFiling(model.TaxAccount, model.ConfirmText, confirmDate, currentUserId);
+
+                    model.ConfirmText = string.Empty;
+
+                    var oldRecord = TaxAccountModels.FirstOrDefault(x => x.TaxAccount.Id == model.TaxAccount.Id);
+                    var updated = _taxAccountService.GetTaxAccountWithInstalmentById(model.TaxAccount.Id);
+
+                    if (oldRecord != null && updated != null)
+                    {
+                        oldRecord.TaxAccount = updated;
+
+                        BusinessTaxAccountsView.Refresh();
+                    }
+                }                
             }
             catch (Exception ex)
             {

@@ -8,6 +8,7 @@ using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
 
+
 namespace AccountingManagement.Modules.AccountManager
 {
     public class AccountManagerModule : IModule
@@ -67,8 +68,10 @@ namespace AccountingManagement.Modules.AccountManager
             containerRegistry.RegisterForNavigation<PayrollPayoutOverview>(ViewRegKeys.PayrollPayoutOverview);
             containerRegistry.RegisterForNavigation<PersonalTaxAccountOverview>(ViewRegKeys.PersonalTaxAccountOverview);
             containerRegistry.RegisterForNavigation<PersonalTaxAccountHistory>(ViewRegKeys.PersonalTaxAccountHistory);
+            containerRegistry.RegisterForNavigation<PersonalTaxAccountWithInstalmentBrief>(ViewRegKeys.PersonalTaxAccountWithInstalmentBrief);//RYAN
             containerRegistry.RegisterForNavigation<TaxAccountOverview>(ViewRegKeys.TaxAccountOverview);
             containerRegistry.RegisterForNavigation<TaxAccountWithInstalmentOverview>(ViewRegKeys.TaxAccountWithInstalmentOverview);
+            containerRegistry.RegisterForNavigation<TaxAccountWithInstalmentBrief>(ViewRegKeys.TaxAccountWithInstalmentBrief);//RYAN
             containerRegistry.RegisterForNavigation<TaxAccountHistory>(ViewRegKeys.TaxAccountHistory);
             containerRegistry.RegisterForNavigation<TaxInstalmentOverview>(ViewRegKeys.TaxInstalmentOverview);
             containerRegistry.RegisterForNavigation<TaskOverview>(ViewRegKeys.TaskOverview);
@@ -89,7 +92,7 @@ namespace AccountingManagement.Modules.AccountManager
             containerRegistry.RegisterDialog<UserAccountDetails, UserAccountDetailsViewModel>();
 
             containerRegistry.RegisterDialog<SimpleInputDialog, SimpleInputDialogViewModel>();
-            containerRegistry.RegisterDialog<SimpleErrorDialog, SimpleErrorDialogViewModel>();
+            containerRegistry.RegisterDialog<SimpleErrorDialog, SimpleErrorDialogViewModel>();           
         }
 
         private void SubscribeToEvents()
